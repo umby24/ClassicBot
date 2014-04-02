@@ -1,0 +1,27 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ClassicBot/Classes/Packets.cs">
+    <Files>
+      <File FileName="ClassicBot/Main.cs" Line="38" Column="33" />
+      <File FileName="ClassicBot/NetworkManager.cs" Line="77" Column="4" />
+      <File FileName="ClassicBot/Classes/Packets.cs" Line="208" Column="47" />
+      <File FileName="ClassicBot/Classes/Classicube_Interaction.cs" Line="127" Column="28" />
+      <File FileName="ClassicBot/LoginSystem.cs" Line="36" Column="16" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="ClassicBot" expanded="True">
+            <Node name="Classes" expanded="True">
+              <Node name="Packets.cs" selected="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
