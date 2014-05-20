@@ -25,9 +25,6 @@
         private void InitializeComponent() {
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.treePlayers = new System.Windows.Forms.TreeView();
-            this.btnSend = new System.Windows.Forms.Button();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +38,9 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.devToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetLoggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.treePlayers = new System.Windows.Forms.TreeView();
+            this.btnSend = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,29 +63,6 @@
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(0, 249);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(848, 20);
-            this.textBox1.TabIndex = 2;
-            // 
-            // treePlayers
-            // 
-            this.treePlayers.Location = new System.Drawing.Point(854, 27);
-            this.treePlayers.Name = "treePlayers";
-            this.treePlayers.Size = new System.Drawing.Size(149, 216);
-            this.treePlayers.TabIndex = 3;
-            // 
-            // btnSend
-            // 
-            this.btnSend.Location = new System.Drawing.Point(854, 249);
-            this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(149, 23);
-            this.btnSend.TabIndex = 4;
-            this.btnSend.Text = "Send";
-            this.btnSend.UseVisualStyleBackColor = true;
-            // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -103,6 +80,7 @@
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
             this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectToolStripMenuItem.Text = "&Connect";
+            this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
             // reconnectToolStripMenuItem
             // 
@@ -142,32 +120,32 @@
             // chatLoggingToolStripMenuItem
             // 
             this.chatLoggingToolStripMenuItem.Name = "chatLoggingToolStripMenuItem";
-            this.chatLoggingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.chatLoggingToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.chatLoggingToolStripMenuItem.Text = "&Chat Logging";
             // 
             // iRCToolStripMenuItem
             // 
             this.iRCToolStripMenuItem.Name = "iRCToolStripMenuItem";
-            this.iRCToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.iRCToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.iRCToolStripMenuItem.Text = "&IRC";
             // 
             // silentToolStripMenuItem
             // 
             this.silentToolStripMenuItem.Name = "silentToolStripMenuItem";
-            this.silentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.silentToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.silentToolStripMenuItem.Text = "&Silent";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(143, 6);
             // 
             // devToolsToolStripMenuItem
             // 
             this.devToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.packetLoggingToolStripMenuItem});
             this.devToolsToolStripMenuItem.Name = "devToolsToolStripMenuItem";
-            this.devToolsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.devToolsToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.devToolsToolStripMenuItem.Text = "Dev Tools";
             // 
             // packetLoggingToolStripMenuItem
@@ -176,7 +154,30 @@
             this.packetLoggingToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.packetLoggingToolStripMenuItem.Text = "Packet Logging";
             // 
-            // Form1
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(0, 249);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(848, 20);
+            this.textBox1.TabIndex = 2;
+            // 
+            // treePlayers
+            // 
+            this.treePlayers.Location = new System.Drawing.Point(854, 27);
+            this.treePlayers.Name = "treePlayers";
+            this.treePlayers.Size = new System.Drawing.Size(149, 216);
+            this.treePlayers.TabIndex = 3;
+            // 
+            // btnSend
+            // 
+            this.btnSend.Location = new System.Drawing.Point(854, 249);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(149, 23);
+            this.btnSend.TabIndex = 4;
+            this.btnSend.Text = "Send";
+            this.btnSend.UseVisualStyleBackColor = true;
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -187,7 +188,7 @@
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Classicube Minebot";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

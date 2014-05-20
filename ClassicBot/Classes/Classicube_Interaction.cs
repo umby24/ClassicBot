@@ -124,7 +124,7 @@ namespace ClassicBot {
         }
 
         public string GetServers() {
-            if (Cachedtime != null && (DateTime.Now - Cachedtime).Minutes < 4) {
+            if (Cachedpage != null && (DateTime.Now - Cachedtime).Minutes < 4) {
                 return Cachedpage;
             }
 

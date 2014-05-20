@@ -92,12 +92,14 @@ namespace ClassicBot {
             var myExtInfo = new ExtInfo();
             myExtInfo.AppName = "ClassicBot";
             myExtInfo.ExtensionCount = (short)ClientMain.ClientSupportedExtensions.Count;
+            myExtInfo.Write(this);
 
             for (int i = 0; i < ClientMain.ClientSupportedExtensions.Count; i++) {
                 var myExtEntry = new ExtEntry();
                 myExtEntry.ExtName = Enum.GetName(typeof(CPEExtensions), ClientMain.ClientSupportedExtensions[i]);
                 myExtEntry.Version = CPEVersionGet(myExtEntry.ExtName);
                 myExtEntry.Write(this);
+                ClientMain.RaiseDebugMessage("Sent extension.");
             }
         }
 

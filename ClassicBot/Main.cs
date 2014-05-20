@@ -98,6 +98,7 @@ namespace ClassicBot {
 			EnableCPE = CPE;
             Location = new Vector3s();
             Position = new byte[2];
+            ClientSupportedExtensions = new List<CPEExtensions>();
             VerifyNames = VerifyName;
 		}
 
@@ -160,6 +161,16 @@ namespace ClassicBot {
             MyLoc.pitch = Position[0];
             MyLoc.yaw = Position[1];
             MyLoc.Write(NM);
+        }
+
+        public void PlaceBlock(int X, int Y, int Z, byte Type) {
+            var BlockPlace = new Classes.SetBlock();
+            BlockPlace.Block = Type;
+            BlockPlace.X = (short)X;
+            BlockPlace.Y = (short)Y;
+            BlockPlace.Z = (short)Z;
+            BlockPlace.Mode = Convert.ToByte((Type > 0));
+            BlockPlace.Write(NM);
         }
         #endregion
         #region Events

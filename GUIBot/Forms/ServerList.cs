@@ -8,15 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace GUIBot {
-    public partial class MainForm : Form {
-        public MainForm() {
+namespace GUIBot.Forms {
+    public partial class ServerList : Form {
+        public ServerList() {
             InitializeComponent();
-        }
-
-        private void connectToolStripMenuItem_Click(object sender, EventArgs e) {
-            var SettingsForm = new Forms.Settings();
-            SettingsForm.Show();
         }
     }
 }

@@ -586,7 +586,9 @@ namespace ClassicBot.Classes {
             if (Core.ReceivedExtensions > Core.Extensions) 
                 Core.RaiseInfoMessage("Warning: Server sent more extensions than ExtInfo reported.");
 
-            Core.ServerExtensions.Add(ExtName, Version);
+            if (!Core.ServerExtensions.ContainsKey(ExtName))
+                Core.ServerExtensions.Add(ExtName, Version);
+
             Core.RaiseDebugMessage("Received ExtEntry: " + ExtName + " -- " + Version.ToString());
 
             if (Core.ReceivedExtensions == Core.Extensions) 
@@ -638,6 +640,8 @@ namespace ClassicBot.Classes {
             var myCB = new CustomBlockSupportLevel();
             myCB.SupportLevel = Main.CustomBlockSuportlevel;
             myCB.Write(NM);
+
+            Core.RaiseDebugMessage("Received CustomBlockSupportLevel.");
         }
     }
 

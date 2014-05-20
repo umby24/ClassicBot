@@ -13,5 +13,10 @@ namespace GUIBot.Forms {
         public Settings() {
             InitializeComponent();
         }
+
+        private void btnServers_Click(object sender, EventArgs e) {
+            var Listing = new ServerList();
+            Listing.Show();
+        }
     }
 }

@@ -26,51 +26,49 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Settings));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.txtServerUrl = new System.Windows.Forms.TextBox();
+            this.lblServerURL = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.lstFavorites = new System.Windows.Forms.ListBox();
+            this.grpLogin = new System.Windows.Forms.GroupBox();
+            this.chkVerify = new System.Windows.Forms.CheckBox();
+            this.lblPort = new System.Windows.Forms.Label();
+            this.txtPort = new System.Windows.Forms.TextBox();
+            this.btnServers = new System.Windows.Forms.Button();
+            this.txtPW = new System.Windows.Forms.TextBox();
+            this.lblPW = new System.Windows.Forms.Label();
+            this.lblUN = new System.Windows.Forms.Label();
+            this.txtUN = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.grpIRC = new System.Windows.Forms.GroupBox();
+            this.lblIrcChan = new System.Windows.Forms.Label();
+            this.txtIrcChan = new System.Windows.Forms.TextBox();
+            this.btnIrcHelp = new System.Windows.Forms.Button();
+            this.btnIrcoff = new System.Windows.Forms.Button();
+            this.btnIrcConnect = new System.Windows.Forms.Button();
+            this.dropIRCDirection = new System.Windows.Forms.ComboBox();
+            this.txtNickPass = new System.Windows.Forms.TextBox();
+            this.txtIrcUN = new System.Windows.Forms.TextBox();
+            this.txtIrcPort = new System.Windows.Forms.TextBox();
+            this.txtircServer = new System.Windows.Forms.TextBox();
+            this.lblIRCDirection = new System.Windows.Forms.Label();
+            this.lblIRCPass = new System.Windows.Forms.Label();
+            this.lblIRCUN = new System.Windows.Forms.Label();
+            this.lblIRCPort = new System.Windows.Forms.Label();
+            this.lblIRCServer = new System.Windows.Forms.Label();
+            this.txtPrefix = new System.Windows.Forms.TextBox();
+            this.lblPrefix = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.tabPage5 = new System.Windows.Forms.TabPage();
-            this.grpLogin = new System.Windows.Forms.GroupBox();
-            this.txtUN = new System.Windows.Forms.TextBox();
-            this.lblUN = new System.Windows.Forms.Label();
-            this.lblPW = new System.Windows.Forms.Label();
-            this.txtPW = new System.Windows.Forms.TextBox();
-            this.lblService = new System.Windows.Forms.Label();
-            this.dropService = new System.Windows.Forms.ComboBox();
-            this.lstFavorites = new System.Windows.Forms.ListBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.btnServers = new System.Windows.Forms.Button();
-            this.lblServerURL = new System.Windows.Forms.Label();
-            this.txtServerUrl = new System.Windows.Forms.TextBox();
-            this.btnConnect = new System.Windows.Forms.Button();
-            this.lblPrefix = new System.Windows.Forms.Label();
-            this.txtPrefix = new System.Windows.Forms.TextBox();
-            this.grpIRC = new System.Windows.Forms.GroupBox();
-            this.lblIRCServer = new System.Windows.Forms.Label();
-            this.lblIRCPort = new System.Windows.Forms.Label();
-            this.lblIRCUN = new System.Windows.Forms.Label();
-            this.lblIRCPass = new System.Windows.Forms.Label();
-            this.lblIRCDirection = new System.Windows.Forms.Label();
-            this.txtircServer = new System.Windows.Forms.TextBox();
-            this.txtIrcPort = new System.Windows.Forms.TextBox();
-            this.txtIrcUN = new System.Windows.Forms.TextBox();
-            this.txtNickPass = new System.Windows.Forms.TextBox();
-            this.dropIRCDirection = new System.Windows.Forms.ComboBox();
-            this.btnIrcConnect = new System.Windows.Forms.Button();
-            this.btnIrcoff = new System.Windows.Forms.Button();
-            this.btnIrcHelp = new System.Windows.Forms.Button();
             this.lblAbout = new System.Windows.Forms.Label();
-            this.txtIrcChan = new System.Windows.Forms.TextBox();
-            this.lblIrcChan = new System.Windows.Forms.Label();
-            this.txtPort = new System.Windows.Forms.TextBox();
-            this.lblPort = new System.Windows.Forms.Label();
-            this.chkVerify = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.tabPage5.SuspendLayout();
             this.grpLogin.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.grpIRC.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -103,6 +101,139 @@
             this.tabPage1.Text = "Connect";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // btnConnect
+            // 
+            this.btnConnect.Location = new System.Drawing.Point(17, 172);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(757, 23);
+            this.btnConnect.TabIndex = 9;
+            this.btnConnect.Text = "Connect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            // 
+            // txtServerUrl
+            // 
+            this.txtServerUrl.Location = new System.Drawing.Point(17, 146);
+            this.txtServerUrl.Name = "txtServerUrl";
+            this.txtServerUrl.Size = new System.Drawing.Size(523, 20);
+            this.txtServerUrl.TabIndex = 8;
+            // 
+            // lblServerURL
+            // 
+            this.lblServerURL.AutoSize = true;
+            this.lblServerURL.Location = new System.Drawing.Point(14, 130);
+            this.lblServerURL.Name = "lblServerURL";
+            this.lblServerURL.Size = new System.Drawing.Size(66, 13);
+            this.lblServerURL.TabIndex = 7;
+            this.lblServerURL.Text = "Server URL:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(639, 3);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(50, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Favorites";
+            // 
+            // lstFavorites
+            // 
+            this.lstFavorites.FormattingEnabled = true;
+            this.lstFavorites.Location = new System.Drawing.Point(546, 19);
+            this.lstFavorites.Name = "lstFavorites";
+            this.lstFavorites.Size = new System.Drawing.Size(230, 147);
+            this.lstFavorites.TabIndex = 6;
+            // 
+            // grpLogin
+            // 
+            this.grpLogin.Controls.Add(this.chkVerify);
+            this.grpLogin.Controls.Add(this.lblPort);
+            this.grpLogin.Controls.Add(this.txtPort);
+            this.grpLogin.Controls.Add(this.btnServers);
+            this.grpLogin.Controls.Add(this.txtPW);
+            this.grpLogin.Controls.Add(this.lblPW);
+            this.grpLogin.Controls.Add(this.lblUN);
+            this.grpLogin.Controls.Add(this.txtUN);
+            this.grpLogin.Location = new System.Drawing.Point(8, 6);
+            this.grpLogin.Name = "grpLogin";
+            this.grpLogin.Size = new System.Drawing.Size(400, 115);
+            this.grpLogin.TabIndex = 0;
+            this.grpLogin.TabStop = false;
+            this.grpLogin.Text = "User Info";
+            // 
+            // chkVerify
+            // 
+            this.chkVerify.AutoSize = true;
+            this.chkVerify.Checked = true;
+            this.chkVerify.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkVerify.Location = new System.Drawing.Point(9, 81);
+            this.chkVerify.Name = "chkVerify";
+            this.chkVerify.Size = new System.Drawing.Size(88, 17);
+            this.chkVerify.TabIndex = 10;
+            this.chkVerify.Text = "Verify Names";
+            this.chkVerify.UseVisualStyleBackColor = true;
+            // 
+            // lblPort
+            // 
+            this.lblPort.AutoSize = true;
+            this.lblPort.Location = new System.Drawing.Point(239, 31);
+            this.lblPort.Name = "lblPort";
+            this.lblPort.Size = new System.Drawing.Size(32, 13);
+            this.lblPort.TabIndex = 9;
+            this.lblPort.Text = "Port: ";
+            this.lblPort.Visible = false;
+            // 
+            // txtPort
+            // 
+            this.txtPort.Location = new System.Drawing.Point(242, 47);
+            this.txtPort.Name = "txtPort";
+            this.txtPort.Size = new System.Drawing.Size(152, 20);
+            this.txtPort.TabIndex = 8;
+            this.txtPort.Text = "25565";
+            this.txtPort.Visible = false;
+            // 
+            // btnServers
+            // 
+            this.btnServers.Location = new System.Drawing.Point(103, 77);
+            this.btnServers.Name = "btnServers";
+            this.btnServers.Size = new System.Drawing.Size(125, 23);
+            this.btnServers.TabIndex = 7;
+            this.btnServers.Text = "Server List";
+            this.btnServers.UseVisualStyleBackColor = true;
+            this.btnServers.Click += new System.EventHandler(this.btnServers_Click);
+            // 
+            // txtPW
+            // 
+            this.txtPW.Location = new System.Drawing.Point(73, 47);
+            this.txtPW.Name = "txtPW";
+            this.txtPW.PasswordChar = '*';
+            this.txtPW.Size = new System.Drawing.Size(152, 20);
+            this.txtPW.TabIndex = 3;
+            // 
+            // lblPW
+            // 
+            this.lblPW.AutoSize = true;
+            this.lblPW.Location = new System.Drawing.Point(6, 50);
+            this.lblPW.Name = "lblPW";
+            this.lblPW.Size = new System.Drawing.Size(56, 13);
+            this.lblPW.TabIndex = 2;
+            this.lblPW.Text = "Password:";
+            // 
+            // lblUN
+            // 
+            this.lblUN.AutoSize = true;
+            this.lblUN.Location = new System.Drawing.Point(6, 22);
+            this.lblUN.Name = "lblUN";
+            this.lblUN.Size = new System.Drawing.Size(61, 13);
+            this.lblUN.TabIndex = 1;
+            this.lblUN.Text = "Username: ";
+            // 
+            // txtUN
+            // 
+            this.txtUN.Location = new System.Drawing.Point(73, 19);
+            this.txtUN.Name = "txtUN";
+            this.txtUN.Size = new System.Drawing.Size(152, 20);
+            this.txtUN.TabIndex = 0;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.grpIRC);
@@ -115,6 +246,177 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Bot Settings";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // grpIRC
+            // 
+            this.grpIRC.Controls.Add(this.lblIrcChan);
+            this.grpIRC.Controls.Add(this.txtIrcChan);
+            this.grpIRC.Controls.Add(this.btnIrcHelp);
+            this.grpIRC.Controls.Add(this.btnIrcoff);
+            this.grpIRC.Controls.Add(this.btnIrcConnect);
+            this.grpIRC.Controls.Add(this.dropIRCDirection);
+            this.grpIRC.Controls.Add(this.txtNickPass);
+            this.grpIRC.Controls.Add(this.txtIrcUN);
+            this.grpIRC.Controls.Add(this.txtIrcPort);
+            this.grpIRC.Controls.Add(this.txtircServer);
+            this.grpIRC.Controls.Add(this.lblIRCDirection);
+            this.grpIRC.Controls.Add(this.lblIRCPass);
+            this.grpIRC.Controls.Add(this.lblIRCUN);
+            this.grpIRC.Controls.Add(this.lblIRCPort);
+            this.grpIRC.Controls.Add(this.lblIRCServer);
+            this.grpIRC.Location = new System.Drawing.Point(479, 6);
+            this.grpIRC.Name = "grpIRC";
+            this.grpIRC.Size = new System.Drawing.Size(295, 191);
+            this.grpIRC.TabIndex = 2;
+            this.grpIRC.TabStop = false;
+            this.grpIRC.Text = "IRC";
+            // 
+            // lblIrcChan
+            // 
+            this.lblIrcChan.AutoSize = true;
+            this.lblIrcChan.Location = new System.Drawing.Point(6, 118);
+            this.lblIrcChan.Name = "lblIrcChan";
+            this.lblIrcChan.Size = new System.Drawing.Size(46, 13);
+            this.lblIrcChan.TabIndex = 14;
+            this.lblIrcChan.Text = "Channel";
+            // 
+            // txtIrcChan
+            // 
+            this.txtIrcChan.Location = new System.Drawing.Point(113, 115);
+            this.txtIrcChan.Name = "txtIrcChan";
+            this.txtIrcChan.PasswordChar = '*';
+            this.txtIrcChan.Size = new System.Drawing.Size(176, 20);
+            this.txtIrcChan.TabIndex = 13;
+            // 
+            // btnIrcHelp
+            // 
+            this.btnIrcHelp.Location = new System.Drawing.Point(113, 162);
+            this.btnIrcHelp.Name = "btnIrcHelp";
+            this.btnIrcHelp.Size = new System.Drawing.Size(75, 23);
+            this.btnIrcHelp.TabIndex = 12;
+            this.btnIrcHelp.Text = "Help";
+            this.btnIrcHelp.UseVisualStyleBackColor = true;
+            // 
+            // btnIrcoff
+            // 
+            this.btnIrcoff.Location = new System.Drawing.Point(214, 162);
+            this.btnIrcoff.Name = "btnIrcoff";
+            this.btnIrcoff.Size = new System.Drawing.Size(75, 23);
+            this.btnIrcoff.TabIndex = 11;
+            this.btnIrcoff.Text = "Turn Off";
+            this.btnIrcoff.UseVisualStyleBackColor = true;
+            // 
+            // btnIrcConnect
+            // 
+            this.btnIrcConnect.Location = new System.Drawing.Point(9, 162);
+            this.btnIrcConnect.Name = "btnIrcConnect";
+            this.btnIrcConnect.Size = new System.Drawing.Size(75, 23);
+            this.btnIrcConnect.TabIndex = 10;
+            this.btnIrcConnect.Text = "Turn On";
+            this.btnIrcConnect.UseVisualStyleBackColor = true;
+            // 
+            // dropIRCDirection
+            // 
+            this.dropIRCDirection.FormattingEnabled = true;
+            this.dropIRCDirection.Items.AddRange(new object[] {
+            "Server -> IRC",
+            "Server <- IRC",
+            "Server <-> IRC"});
+            this.dropIRCDirection.Location = new System.Drawing.Point(113, 137);
+            this.dropIRCDirection.Name = "dropIRCDirection";
+            this.dropIRCDirection.Size = new System.Drawing.Size(176, 21);
+            this.dropIRCDirection.TabIndex = 9;
+            // 
+            // txtNickPass
+            // 
+            this.txtNickPass.Location = new System.Drawing.Point(113, 89);
+            this.txtNickPass.Name = "txtNickPass";
+            this.txtNickPass.PasswordChar = '*';
+            this.txtNickPass.Size = new System.Drawing.Size(176, 20);
+            this.txtNickPass.TabIndex = 8;
+            // 
+            // txtIrcUN
+            // 
+            this.txtIrcUN.Location = new System.Drawing.Point(113, 63);
+            this.txtIrcUN.Name = "txtIrcUN";
+            this.txtIrcUN.Size = new System.Drawing.Size(176, 20);
+            this.txtIrcUN.TabIndex = 7;
+            // 
+            // txtIrcPort
+            // 
+            this.txtIrcPort.Location = new System.Drawing.Point(113, 37);
+            this.txtIrcPort.Name = "txtIrcPort";
+            this.txtIrcPort.Size = new System.Drawing.Size(176, 20);
+            this.txtIrcPort.TabIndex = 6;
+            // 
+            // txtircServer
+            // 
+            this.txtircServer.Location = new System.Drawing.Point(113, 13);
+            this.txtircServer.Name = "txtircServer";
+            this.txtircServer.Size = new System.Drawing.Size(176, 20);
+            this.txtircServer.TabIndex = 5;
+            // 
+            // lblIRCDirection
+            // 
+            this.lblIRCDirection.AutoSize = true;
+            this.lblIRCDirection.Location = new System.Drawing.Point(6, 140);
+            this.lblIRCDirection.Name = "lblIRCDirection";
+            this.lblIRCDirection.Size = new System.Drawing.Size(95, 13);
+            this.lblIRCDirection.TabIndex = 4;
+            this.lblIRCDirection.Text = "Message Direction";
+            // 
+            // lblIRCPass
+            // 
+            this.lblIRCPass.AutoSize = true;
+            this.lblIRCPass.Location = new System.Drawing.Point(6, 92);
+            this.lblIRCPass.Name = "lblIRCPass";
+            this.lblIRCPass.Size = new System.Drawing.Size(101, 13);
+            this.lblIRCPass.TabIndex = 3;
+            this.lblIRCPass.Text = "Nickserv Password:";
+            // 
+            // lblIRCUN
+            // 
+            this.lblIRCUN.AutoSize = true;
+            this.lblIRCUN.Location = new System.Drawing.Point(6, 66);
+            this.lblIRCUN.Name = "lblIRCUN";
+            this.lblIRCUN.Size = new System.Drawing.Size(55, 13);
+            this.lblIRCUN.TabIndex = 2;
+            this.lblIRCUN.Text = "Username";
+            // 
+            // lblIRCPort
+            // 
+            this.lblIRCPort.AutoSize = true;
+            this.lblIRCPort.Location = new System.Drawing.Point(6, 40);
+            this.lblIRCPort.Name = "lblIRCPort";
+            this.lblIRCPort.Size = new System.Drawing.Size(26, 13);
+            this.lblIRCPort.TabIndex = 1;
+            this.lblIRCPort.Text = "Port";
+            // 
+            // lblIRCServer
+            // 
+            this.lblIRCServer.AutoSize = true;
+            this.lblIRCServer.Location = new System.Drawing.Point(6, 16);
+            this.lblIRCServer.Name = "lblIRCServer";
+            this.lblIRCServer.Size = new System.Drawing.Size(38, 13);
+            this.lblIRCServer.TabIndex = 0;
+            this.lblIRCServer.Text = "Server";
+            // 
+            // txtPrefix
+            // 
+            this.txtPrefix.Location = new System.Drawing.Point(100, 2);
+            this.txtPrefix.MaxLength = 1;
+            this.txtPrefix.Name = "txtPrefix";
+            this.txtPrefix.Size = new System.Drawing.Size(34, 20);
+            this.txtPrefix.TabIndex = 1;
+            // 
+            // lblPrefix
+            // 
+            this.lblPrefix.AutoSize = true;
+            this.lblPrefix.Location = new System.Drawing.Point(8, 5);
+            this.lblPrefix.Name = "lblPrefix";
+            this.lblPrefix.Size = new System.Drawing.Size(86, 13);
+            this.lblPrefix.TabIndex = 0;
+            this.lblPrefix.Text = "Command Prefix:";
             // 
             // tabPage3
             // 
@@ -144,285 +446,6 @@
             this.tabPage5.Text = "About";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
-            // grpLogin
-            // 
-            this.grpLogin.Controls.Add(this.chkVerify);
-            this.grpLogin.Controls.Add(this.lblPort);
-            this.grpLogin.Controls.Add(this.txtPort);
-            this.grpLogin.Controls.Add(this.btnServers);
-            this.grpLogin.Controls.Add(this.dropService);
-            this.grpLogin.Controls.Add(this.lblService);
-            this.grpLogin.Controls.Add(this.txtPW);
-            this.grpLogin.Controls.Add(this.lblPW);
-            this.grpLogin.Controls.Add(this.lblUN);
-            this.grpLogin.Controls.Add(this.txtUN);
-            this.grpLogin.Location = new System.Drawing.Point(8, 6);
-            this.grpLogin.Name = "grpLogin";
-            this.grpLogin.Size = new System.Drawing.Size(400, 115);
-            this.grpLogin.TabIndex = 0;
-            this.grpLogin.TabStop = false;
-            this.grpLogin.Text = "User Info";
-            // 
-            // txtUN
-            // 
-            this.txtUN.Location = new System.Drawing.Point(73, 19);
-            this.txtUN.Name = "txtUN";
-            this.txtUN.Size = new System.Drawing.Size(152, 20);
-            this.txtUN.TabIndex = 0;
-            // 
-            // lblUN
-            // 
-            this.lblUN.AutoSize = true;
-            this.lblUN.Location = new System.Drawing.Point(6, 22);
-            this.lblUN.Name = "lblUN";
-            this.lblUN.Size = new System.Drawing.Size(61, 13);
-            this.lblUN.TabIndex = 1;
-            this.lblUN.Text = "Username: ";
-            // 
-            // lblPW
-            // 
-            this.lblPW.AutoSize = true;
-            this.lblPW.Location = new System.Drawing.Point(6, 50);
-            this.lblPW.Name = "lblPW";
-            this.lblPW.Size = new System.Drawing.Size(56, 13);
-            this.lblPW.TabIndex = 2;
-            this.lblPW.Text = "Password:";
-            // 
-            // txtPW
-            // 
-            this.txtPW.Location = new System.Drawing.Point(73, 47);
-            this.txtPW.Name = "txtPW";
-            this.txtPW.PasswordChar = '*';
-            this.txtPW.Size = new System.Drawing.Size(152, 20);
-            this.txtPW.TabIndex = 3;
-            // 
-            // lblService
-            // 
-            this.lblService.AutoSize = true;
-            this.lblService.Location = new System.Drawing.Point(6, 82);
-            this.lblService.Name = "lblService";
-            this.lblService.Size = new System.Drawing.Size(46, 13);
-            this.lblService.TabIndex = 4;
-            this.lblService.Text = "Service:";
-            // 
-            // dropService
-            // 
-            this.dropService.FormattingEnabled = true;
-            this.dropService.Items.AddRange(new object[] {
-            "Classicube",
-            "Minecraft.net"});
-            this.dropService.Location = new System.Drawing.Point(73, 79);
-            this.dropService.Name = "dropService";
-            this.dropService.Size = new System.Drawing.Size(152, 21);
-            this.dropService.Sorted = true;
-            this.dropService.TabIndex = 5;
-            this.dropService.Text = "Classicube";
-            // 
-            // lstFavorites
-            // 
-            this.lstFavorites.FormattingEnabled = true;
-            this.lstFavorites.Location = new System.Drawing.Point(546, 19);
-            this.lstFavorites.Name = "lstFavorites";
-            this.lstFavorites.Size = new System.Drawing.Size(230, 147);
-            this.lstFavorites.TabIndex = 6;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(639, 3);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(50, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Favorites";
-            // 
-            // btnServers
-            // 
-            this.btnServers.Location = new System.Drawing.Point(231, 77);
-            this.btnServers.Name = "btnServers";
-            this.btnServers.Size = new System.Drawing.Size(125, 23);
-            this.btnServers.TabIndex = 7;
-            this.btnServers.Text = "Server List";
-            this.btnServers.UseVisualStyleBackColor = true;
-            // 
-            // lblServerURL
-            // 
-            this.lblServerURL.AutoSize = true;
-            this.lblServerURL.Location = new System.Drawing.Point(14, 130);
-            this.lblServerURL.Name = "lblServerURL";
-            this.lblServerURL.Size = new System.Drawing.Size(66, 13);
-            this.lblServerURL.TabIndex = 7;
-            this.lblServerURL.Text = "Server URL:";
-            // 
-            // txtServerUrl
-            // 
-            this.txtServerUrl.Location = new System.Drawing.Point(17, 146);
-            this.txtServerUrl.Name = "txtServerUrl";
-            this.txtServerUrl.Size = new System.Drawing.Size(523, 20);
-            this.txtServerUrl.TabIndex = 8;
-            // 
-            // btnConnect
-            // 
-            this.btnConnect.Location = new System.Drawing.Point(17, 172);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(757, 23);
-            this.btnConnect.TabIndex = 9;
-            this.btnConnect.Text = "Connect";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            // 
-            // lblPrefix
-            // 
-            this.lblPrefix.AutoSize = true;
-            this.lblPrefix.Location = new System.Drawing.Point(8, 5);
-            this.lblPrefix.Name = "lblPrefix";
-            this.lblPrefix.Size = new System.Drawing.Size(86, 13);
-            this.lblPrefix.TabIndex = 0;
-            this.lblPrefix.Text = "Command Prefix:";
-            // 
-            // txtPrefix
-            // 
-            this.txtPrefix.Location = new System.Drawing.Point(100, 2);
-            this.txtPrefix.MaxLength = 1;
-            this.txtPrefix.Name = "txtPrefix";
-            this.txtPrefix.Size = new System.Drawing.Size(34, 20);
-            this.txtPrefix.TabIndex = 1;
-            // 
-            // grpIRC
-            // 
-            this.grpIRC.Controls.Add(this.lblIrcChan);
-            this.grpIRC.Controls.Add(this.txtIrcChan);
-            this.grpIRC.Controls.Add(this.btnIrcHelp);
-            this.grpIRC.Controls.Add(this.btnIrcoff);
-            this.grpIRC.Controls.Add(this.btnIrcConnect);
-            this.grpIRC.Controls.Add(this.dropIRCDirection);
-            this.grpIRC.Controls.Add(this.txtNickPass);
-            this.grpIRC.Controls.Add(this.txtIrcUN);
-            this.grpIRC.Controls.Add(this.txtIrcPort);
-            this.grpIRC.Controls.Add(this.txtircServer);
-            this.grpIRC.Controls.Add(this.lblIRCDirection);
-            this.grpIRC.Controls.Add(this.lblIRCPass);
-            this.grpIRC.Controls.Add(this.lblIRCUN);
-            this.grpIRC.Controls.Add(this.lblIRCPort);
-            this.grpIRC.Controls.Add(this.lblIRCServer);
-            this.grpIRC.Location = new System.Drawing.Point(479, 6);
-            this.grpIRC.Name = "grpIRC";
-            this.grpIRC.Size = new System.Drawing.Size(295, 191);
-            this.grpIRC.TabIndex = 2;
-            this.grpIRC.TabStop = false;
-            this.grpIRC.Text = "IRC";
-            // 
-            // lblIRCServer
-            // 
-            this.lblIRCServer.AutoSize = true;
-            this.lblIRCServer.Location = new System.Drawing.Point(6, 16);
-            this.lblIRCServer.Name = "lblIRCServer";
-            this.lblIRCServer.Size = new System.Drawing.Size(38, 13);
-            this.lblIRCServer.TabIndex = 0;
-            this.lblIRCServer.Text = "Server";
-            // 
-            // lblIRCPort
-            // 
-            this.lblIRCPort.AutoSize = true;
-            this.lblIRCPort.Location = new System.Drawing.Point(6, 40);
-            this.lblIRCPort.Name = "lblIRCPort";
-            this.lblIRCPort.Size = new System.Drawing.Size(26, 13);
-            this.lblIRCPort.TabIndex = 1;
-            this.lblIRCPort.Text = "Port";
-            // 
-            // lblIRCUN
-            // 
-            this.lblIRCUN.AutoSize = true;
-            this.lblIRCUN.Location = new System.Drawing.Point(6, 66);
-            this.lblIRCUN.Name = "lblIRCUN";
-            this.lblIRCUN.Size = new System.Drawing.Size(55, 13);
-            this.lblIRCUN.TabIndex = 2;
-            this.lblIRCUN.Text = "Username";
-            // 
-            // lblIRCPass
-            // 
-            this.lblIRCPass.AutoSize = true;
-            this.lblIRCPass.Location = new System.Drawing.Point(6, 92);
-            this.lblIRCPass.Name = "lblIRCPass";
-            this.lblIRCPass.Size = new System.Drawing.Size(101, 13);
-            this.lblIRCPass.TabIndex = 3;
-            this.lblIRCPass.Text = "Nickserv Password:";
-            // 
-            // lblIRCDirection
-            // 
-            this.lblIRCDirection.AutoSize = true;
-            this.lblIRCDirection.Location = new System.Drawing.Point(6, 140);
-            this.lblIRCDirection.Name = "lblIRCDirection";
-            this.lblIRCDirection.Size = new System.Drawing.Size(95, 13);
-            this.lblIRCDirection.TabIndex = 4;
-            this.lblIRCDirection.Text = "Message Direction";
-            // 
-            // txtircServer
-            // 
-            this.txtircServer.Location = new System.Drawing.Point(113, 13);
-            this.txtircServer.Name = "txtircServer";
-            this.txtircServer.Size = new System.Drawing.Size(176, 20);
-            this.txtircServer.TabIndex = 5;
-            // 
-            // txtIrcPort
-            // 
-            this.txtIrcPort.Location = new System.Drawing.Point(113, 37);
-            this.txtIrcPort.Name = "txtIrcPort";
-            this.txtIrcPort.Size = new System.Drawing.Size(176, 20);
-            this.txtIrcPort.TabIndex = 6;
-            // 
-            // txtIrcUN
-            // 
-            this.txtIrcUN.Location = new System.Drawing.Point(113, 63);
-            this.txtIrcUN.Name = "txtIrcUN";
-            this.txtIrcUN.Size = new System.Drawing.Size(176, 20);
-            this.txtIrcUN.TabIndex = 7;
-            // 
-            // txtNickPass
-            // 
-            this.txtNickPass.Location = new System.Drawing.Point(113, 89);
-            this.txtNickPass.Name = "txtNickPass";
-            this.txtNickPass.PasswordChar = '*';
-            this.txtNickPass.Size = new System.Drawing.Size(176, 20);
-            this.txtNickPass.TabIndex = 8;
-            // 
-            // dropIRCDirection
-            // 
-            this.dropIRCDirection.FormattingEnabled = true;
-            this.dropIRCDirection.Items.AddRange(new object[] {
-            "Server -> IRC",
-            "Server <- IRC",
-            "Server <-> IRC"});
-            this.dropIRCDirection.Location = new System.Drawing.Point(113, 137);
-            this.dropIRCDirection.Name = "dropIRCDirection";
-            this.dropIRCDirection.Size = new System.Drawing.Size(176, 21);
-            this.dropIRCDirection.TabIndex = 9;
-            // 
-            // btnIrcConnect
-            // 
-            this.btnIrcConnect.Location = new System.Drawing.Point(9, 162);
-            this.btnIrcConnect.Name = "btnIrcConnect";
-            this.btnIrcConnect.Size = new System.Drawing.Size(75, 23);
-            this.btnIrcConnect.TabIndex = 10;
-            this.btnIrcConnect.Text = "Turn On";
-            this.btnIrcConnect.UseVisualStyleBackColor = true;
-            // 
-            // btnIrcoff
-            // 
-            this.btnIrcoff.Location = new System.Drawing.Point(214, 162);
-            this.btnIrcoff.Name = "btnIrcoff";
-            this.btnIrcoff.Size = new System.Drawing.Size(75, 23);
-            this.btnIrcoff.TabIndex = 11;
-            this.btnIrcoff.Text = "Turn Off";
-            this.btnIrcoff.UseVisualStyleBackColor = true;
-            // 
-            // btnIrcHelp
-            // 
-            this.btnIrcHelp.Location = new System.Drawing.Point(113, 162);
-            this.btnIrcHelp.Name = "btnIrcHelp";
-            this.btnIrcHelp.Size = new System.Drawing.Size(75, 23);
-            this.btnIrcHelp.TabIndex = 12;
-            this.btnIrcHelp.Text = "Help";
-            this.btnIrcHelp.UseVisualStyleBackColor = true;
-            // 
             // lblAbout
             // 
             this.lblAbout.AutoSize = true;
@@ -431,54 +454,6 @@
             this.lblAbout.Size = new System.Drawing.Size(434, 143);
             this.lblAbout.TabIndex = 0;
             this.lblAbout.Text = resources.GetString("lblAbout.Text");
-            // 
-            // txtIrcChan
-            // 
-            this.txtIrcChan.Location = new System.Drawing.Point(113, 115);
-            this.txtIrcChan.Name = "txtIrcChan";
-            this.txtIrcChan.PasswordChar = '*';
-            this.txtIrcChan.Size = new System.Drawing.Size(176, 20);
-            this.txtIrcChan.TabIndex = 13;
-            // 
-            // lblIrcChan
-            // 
-            this.lblIrcChan.AutoSize = true;
-            this.lblIrcChan.Location = new System.Drawing.Point(6, 118);
-            this.lblIrcChan.Name = "lblIrcChan";
-            this.lblIrcChan.Size = new System.Drawing.Size(46, 13);
-            this.lblIrcChan.TabIndex = 14;
-            this.lblIrcChan.Text = "Channel";
-            // 
-            // txtPort
-            // 
-            this.txtPort.Location = new System.Drawing.Point(242, 47);
-            this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(152, 20);
-            this.txtPort.TabIndex = 8;
-            this.txtPort.Text = "25565";
-            this.txtPort.Visible = false;
-            // 
-            // lblPort
-            // 
-            this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(239, 31);
-            this.lblPort.Name = "lblPort";
-            this.lblPort.Size = new System.Drawing.Size(32, 13);
-            this.lblPort.TabIndex = 9;
-            this.lblPort.Text = "Port: ";
-            this.lblPort.Visible = false;
-            // 
-            // chkVerify
-            // 
-            this.chkVerify.AutoSize = true;
-            this.chkVerify.Checked = true;
-            this.chkVerify.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkVerify.Location = new System.Drawing.Point(242, 11);
-            this.chkVerify.Name = "chkVerify";
-            this.chkVerify.Size = new System.Drawing.Size(88, 17);
-            this.chkVerify.TabIndex = 10;
-            this.chkVerify.Text = "Verify Names";
-            this.chkVerify.UseVisualStyleBackColor = true;
             // 
             // Settings
             // 
@@ -491,14 +466,14 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
-            this.tabPage2.ResumeLayout(false);
-            this.tabPage2.PerformLayout();
-            this.tabPage5.ResumeLayout(false);
-            this.tabPage5.PerformLayout();
             this.grpLogin.ResumeLayout(false);
             this.grpLogin.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.grpIRC.ResumeLayout(false);
             this.grpIRC.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -512,8 +487,6 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.GroupBox grpLogin;
-        private System.Windows.Forms.ComboBox dropService;
-        private System.Windows.Forms.Label lblService;
         private System.Windows.Forms.TextBox txtPW;
         private System.Windows.Forms.Label lblPW;
         private System.Windows.Forms.Label lblUN;

@@ -53,7 +53,9 @@ namespace ClassicBot.World {
                 for (int y = 0; y < MapSize.Y - 1; y++) {
                     for (int z = 0; z < MapSize.Z - 1; z++) {
                         var MyId = GetBlockId((short)x, (short)y, (short)z);
-                        if (MyId > 49) {
+                        if (MyId > 49 && !ClientMain.ClientSupportedExtensions.Contains(CPEExtensions.CustomBlocks)) {
+                            ClientMain.RaiseDebugMessage("Block ID out of bounds: " + MyId.ToString() + " :" + x.ToString() + " " + y.ToString() + " " + z.ToString());
+                        } else if (MyId > 65) {
                             ClientMain.RaiseDebugMessage("Block ID out of bounds: " + MyId.ToString() + " :" + x.ToString() + " " + y.ToString() + " " + z.ToString());
                         }
                     }

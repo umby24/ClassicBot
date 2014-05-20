@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 
 namespace CLIBot.Libraries {
-    class FileLogger {
+    public class FileLogger {
         public string FileName;
 
         public FileLogger(string Filename) {

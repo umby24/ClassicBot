@@ -29,6 +29,9 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Zlib">
+      <HintPath>..\..\..\..\programming\.NET Libraries\Ionic.Zlib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="ClassicWrapped">
       <HintPath>..\..\..\..\..\media\Storage\Documents\GitHub\Hypercube\ClassicWrapped\bin\Release\ClassicWrapped.dll</HintPath>
@@ -40,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Classes\Assistant.cs" />
     <Compile Include="Classes\GZip.cs" />
     <Compile Include="CPE.cs" />
     <Compile Include="Main.cs" />
