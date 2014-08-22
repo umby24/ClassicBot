@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.IO;
 using ClassicBot;
 
@@ -13,17 +9,16 @@ namespace CLIBot.Classes {
         public string ImportFile;
         public bool Importing;
 
-        public void ImportMBot(Main Client, short X, short Y, short Z) {
+        public void ImportMBot(Bot client, short x, short y, short z) {
             if (!File.Exists("Imports\\" + ImportFile + ".mbot")) { 
-                Client.SendChat("File not found.");
+                client.SendChat("File not found.");
                 return;
             }
 
-            Client.SendChat("Importing.");
-            string[] BlockLines;
+            client.SendChat("Importing.");
 
-            using (var SR = new StreamReader("Imports\\" + ImportFile + ".mbot")) 
-                BlockLines = SR.ReadToEnd().Split(new char[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
+            using (var sr = new StreamReader("Imports\\" + ImportFile + ".mbot")) 
+                sr.ReadToEnd().Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries);
 
             //ImportThread = new Thread(() => ImportMbotThread(BlockLines, Client, X, Y, Z));
             //ImportThread.Start();
@@ -31,10 +26,10 @@ namespace CLIBot.Classes {
             //ImportThread.Start(BlockLines, Client, X, Y, Z);
         }
 
-        public void ImportMbotThread(string[] Lines, Main Client, short BaseX, short BaseY, short BaseZ) {
-            foreach (string m in Lines) {
+        public void ImportMbotThread(string[] lines, Bot client, short baseX, short baseY, short baseZ) {
+            foreach (string m in lines) {
                 string[] mySplit = m.Split(',');
-                int x = 0, y = 0, z = 0, type = 0;
+                int x, y, z, type;
 
                 int.TryParse(mySplit[0], out x);
                 int.TryParse(mySplit[1], out y);
@@ -42,9 +37,9 @@ namespace CLIBot.Classes {
                 int.TryParse(mySplit[3].Replace(":", ""), out type);
 
                 if (type != 0)
-                    Client.PlaceBlock(BaseX + x, BaseY + y, BaseZ + z, (byte)type);
+                    client.PlaceBlock(baseX + x, baseY + y, baseZ + z, (byte)type);
             }
-            Client.SendChat("Done importing.");
+            client.SendChat("Done importing.");
         }
     }
 }

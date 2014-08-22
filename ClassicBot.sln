@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClassicBot", "ClassicBot\ClassicBot.csproj", "{DA6BC956-2BE1-4401-97D0-4B4D4A32C95B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIBot", "CLIBot\CLIBot.csproj", "{2494E601-226F-49AF-B4E2-96235AEA494B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUIBot", "GUIBot\GUIBot.csproj", "{AA99BA24-EE72-4064-BA97-8460406E5808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StressBot", "StressBot\StressBot.csproj", "{7696D904-473F-4632-8130-4ACB07F9AB7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{AA99BA24-EE72-4064-BA97-8460406E5808}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA99BA24-EE72-4064-BA97-8460406E5808}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA99BA24-EE72-4064-BA97-8460406E5808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7696D904-473F-4632-8130-4ACB07F9AB7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7696D904-473F-4632-8130-4ACB07F9AB7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7696D904-473F-4632-8130-4ACB07F9AB7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7696D904-473F-4632-8130-4ACB07F9AB7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

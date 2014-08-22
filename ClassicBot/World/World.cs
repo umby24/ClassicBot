@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ClassicBot.World {
     public class WorldContainer {
         public byte[] BlockArray;
-        public Vector3s MapSize;
+        public Vector3S MapSize;
 
         public WorldContainer() {
             BlockArray = new byte[0];
@@ -15,12 +12,12 @@ namespace ClassicBot.World {
         /// <summary>
         /// Retreives the block at the given coordinates.
         /// </summary>
-        /// <param name="X"></param>
-        /// <param name="Y"></param>
-        /// <param name="Z"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         /// <returns></returns>
-        public byte GetBlockId(short X, short Y, short Z) {
-            int index = (Z * MapSize.Y + Y) * MapSize.X + X;
+        public byte GetBlockId(short x, short y, short z) {
+            int index = (z * MapSize.Y + y) * MapSize.X + x;
 
             if (index > BlockArray.Length - 1)
                 return 0;
@@ -31,32 +28,32 @@ namespace ClassicBot.World {
         /// <summary>
         /// Updates the block at the given coordinates.
         /// </summary>
-        /// <param name="X"></param>
-        /// <param name="Y"></param>
-        /// <param name="Z"></param>
-        /// <param name="Type"></param>
-        public void UpdateBlock(short X, short Y, short Z, byte Type) {
-            int index = (Z * MapSize.Y + Y) * MapSize.X + X;
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="type"></param>
+        public void UpdateBlock(short x, short y, short z, byte type) {
+            int index = (z * MapSize.Y + y) * MapSize.X + x;
 
             if (index > BlockArray.Length - 1)
                 return;
 
-            BlockArray[index] = Type;
+            BlockArray[index] = type;
         }
 
         /// <summary>
         /// Performs a sanity check against the map file to ensure that there are no out of range values.
         /// </summary>
-        /// <param name="ClientMain"></param>
-        public void WorldCheck(Main ClientMain) {
-            for (int x = 0; x < MapSize.X - 1; x++) {
-                for (int y = 0; y < MapSize.Y - 1; y++) {
-                    for (int z = 0; z < MapSize.Z - 1; z++) {
-                        var MyId = GetBlockId((short)x, (short)y, (short)z);
-                        if (MyId > 49 && !ClientMain.ClientSupportedExtensions.Contains(CPEExtensions.CustomBlocks)) {
-                            ClientMain.RaiseDebugMessage("Block ID out of bounds: " + MyId.ToString() + " :" + x.ToString() + " " + y.ToString() + " " + z.ToString());
-                        } else if (MyId > 65) {
-                            ClientMain.RaiseDebugMessage("Block ID out of bounds: " + MyId.ToString() + " :" + x.ToString() + " " + y.ToString() + " " + z.ToString());
+        /// <param name="clientBot"></param>
+        public void WorldCheck(Bot clientBot) {
+            for (var x = 0; x < MapSize.X - 1; x++) {
+                for (var y = 0; y < MapSize.Y - 1; y++) {
+                    for (var z = 0; z < MapSize.Z - 1; z++) {
+                        var myId = GetBlockId((short)x, (short)y, (short)z);
+                        if (myId > 49 && !clientBot.ClientSupportedExtensions.Contains(CPEExtensions.CustomBlocks)) {
+                            clientBot.RaiseErrorMessage("Block ID out of bounds: " + myId + " :" + x + " " + y + " " + z);
+                        } else if (myId > 65) {
+                            clientBot.RaiseErrorMessage("Block ID out of bounds: " + myId + " :" + x + " " + y + " " + z);
                         }
                     }
                 }
@@ -67,12 +64,12 @@ namespace ClassicBot.World {
         /// Removes the Int at the beginning of the byte array that gives its length.
         /// </summary>
         public void RemoveSize() {
-            var Temp = new byte[BlockArray.Length - 4];
+            var temp = new byte[BlockArray.Length - 4];
 
-            Buffer.BlockCopy(BlockArray, 3, Temp, 0, BlockArray.Length - 4);
+            Buffer.BlockCopy(BlockArray, 3, temp, 0, BlockArray.Length - 4);
 
-            BlockArray = Temp;
-            Temp = null;
+            BlockArray = temp;
+            temp = null;
         }
     }
 }

@@ -11,7 +11,7 @@ using ClassicWrapped;
 
 namespace ClassicBot {
     public class NetworkManager {
-        public Main ClientMain;
+        public Bot ClientBot;
         public ClassicWrapped.ClassicWrapped wSock;
         public object WriteLock;
 		public NetworkStream BaseStream;
@@ -20,9 +20,9 @@ namespace ClassicBot {
         Thread Handler, TimeoutHandler;
         Dictionary<int, Func<IPacket>> Packets;
 
-        public NetworkManager(Main Core) {
+        public NetworkManager(Bot Core) {
             WriteLock = new object();
-            ClientMain = Core;
+            ClientBot = Core;
             Populate();
         }
 
@@ -65,7 +65,7 @@ namespace ClassicBot {
 				{32, () => new HackControl()}
             };
 
-			ClientMain.RaiseDebugMessage("Packets populated.");
+			ClientBot.RaiseDebugMessage("Packets populated.");
         }
 
         /// <summary>
@@ -74,10 +74,10 @@ namespace ClassicBot {
 		void DoHandshake() {
 			var hs = new Handshake();
 			hs.ProtocolVersion = 7;
-			hs.Name = ClientMain.Username.PadRight(64);
-			hs.MOTD = ClientMain.MPPass.PadRight(64);
+			hs.Name = ClientBot.Username.PadRight(64);
+			hs.Motd = ClientBot.MpPass.PadRight(64);
 
-			if (ClientMain.EnableCPE)
+			if (ClientBot.EnableCpe)
 				hs.Usertype = 66;
 			else
 				hs.Usertype = 0;
@@ -91,15 +91,15 @@ namespace ClassicBot {
         public void SendCPE() {
             var myExtInfo = new ExtInfo();
             myExtInfo.AppName = "ClassicBot";
-            myExtInfo.ExtensionCount = (short)ClientMain.ClientSupportedExtensions.Count;
+            myExtInfo.ExtensionCount = (short)ClientBot.ClientSupportedExtensions.Count;
             myExtInfo.Write(this);
 
-            for (int i = 0; i < ClientMain.ClientSupportedExtensions.Count; i++) {
+            for (int i = 0; i < ClientBot.ClientSupportedExtensions.Count; i++) {
                 var myExtEntry = new ExtEntry();
-                myExtEntry.ExtName = Enum.GetName(typeof(CPEExtensions), ClientMain.ClientSupportedExtensions[i]);
+                myExtEntry.ExtName = Enum.GetName(typeof(CPEExtensions), ClientBot.ClientSupportedExtensions[i]);
                 myExtEntry.Version = CPEVersionGet(myExtEntry.ExtName);
                 myExtEntry.Write(this);
-                ClientMain.RaiseDebugMessage("Sent extension.");
+                ClientBot.RaiseDebugMessage("Sent extension.");
             }
         }
 
@@ -111,33 +111,33 @@ namespace ClassicBot {
         public int CPEVersionGet(string ExtName) {
             switch (ExtName) {
                 case "ClickDistance":
-                    return Main.ClickDistanceVersion;
+                    return Bot.ClickDistanceVersion;
                 case "CustomBlocks":
-                    return Main.CustomBlocksVersion;
+                    return Bot.CustomBlocksVersion;
                 case "HeldBlock":
-                    return Main.HeldBlockVersion;
+                    return Bot.HeldBlockVersion;
                 case "EmoteFix":
-                    return Main.EmoteFixVersion;
+                    return Bot.EmoteFixVersion;
                 case "TextHotKey":
-                    return Main.TextHotKetVersion;
+                    return Bot.TextHotKetVersion;
                 case "ExtPlayerList":
-                    return Main.ExtPlayerListVersion;
+                    return Bot.ExtPlayerListVersion;
                 case "EnvColors":
-                    return Main.EnvColorsVersion;
+                    return Bot.EnvColorsVersion;
                 case "SelectionCuboid":
-                    return Main.SelectionCuboidVersion;
+                    return Bot.SelectionCuboidVersion;
                 case "BlockPermissions":
-                    return Main.BlockPermissionsVersion;
+                    return Bot.BlockPermissionsVersion;
                 case "ChangeModel":
-                    return Main.ChangeModelVersion;
+                    return Bot.ChangeModelVersion;
                 case "EnvMapAppearance":
-                    return Main.EnvMapAppearanceVersion;
+                    return Bot.EnvMapAppearanceVersion;
                 case "EnvWeatherType":
-                    return Main.EnvWeatherTypeVersion;
+                    return Bot.EnvWeatherTypeVersion;
                 case "HackControl":
-                    return Main.HackControlVersion;
+                    return Bot.HackControlVersion;
                 case "MessageTypes":
-                    return Main.MessageTypesVersion;
+                    return Bot.MessageTypesVersion;
                 default:
                     return 0;
             }
@@ -149,23 +149,23 @@ namespace ClassicBot {
 		public void Connect() {
 			try {
 				BaseSock = new TcpClient();
-				var AR = BaseSock.BeginConnect(ClientMain.IP, ClientMain.Port, null, null);
+				var AR = BaseSock.BeginConnect(ClientBot.Ip, ClientBot.Port, null, null);
 
 				using (var wh = AR.AsyncWaitHandle) {
 					if (!AR.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
 						BaseSock.Close();
-						ClientMain.RaiseErrorMessage("Failed to connect: Timeout.");
+						ClientBot.RaiseErrorMessage("Failed to connect: Timeout.");
 						return;
 					}
 
 					BaseSock.EndConnect(AR);
 				}
 			} catch (Exception e) {
-				ClientMain.RaiseErrorMessage("Failed to connect: " + e.Message);
+				ClientBot.RaiseErrorMessage("Failed to connect: " + e.Message);
 				return;
 			}
 
-			ClientMain.RaiseInfoMessage("Connected to server.");
+			ClientBot.RaiseInfoMessage("Connected to server.");
 
 			BaseStream = BaseSock.GetStream();
 			wSock = new ClassicWrapped.ClassicWrapped();
@@ -204,15 +204,15 @@ namespace ClassicBot {
 				while ((PacketID = wSock.ReadByte()) != 255) {
 					if (BaseSock.Connected) {
 						if (!Packets.ContainsKey((int)PacketID)) {
-							ClientMain.RaiseErrorMessage("Received unknown packet! ID: " + PacketID.ToString());
+							ClientBot.RaiseErrorMessage("Received unknown packet! ID: " + PacketID.ToString());
 							Disconnect();
 						}
 
 						var Packet = Packets[PacketID]();
 						Packet.Read(this);
-						Packet.Handle(this, ClientMain);
+						Packet.Handle(this, ClientBot);
 
-						ClientMain.RaisePacketReceived("ID: " + PacketID.ToString());
+						ClientBot.RaisePacketReceived("ID: " + PacketID.ToString());
 					} else {
 						Disconnect();
 						break;
@@ -220,8 +220,8 @@ namespace ClassicBot {
 				}
 			} catch (Exception e) {
 				if (e.GetType() != typeof(ThreadAbortException)) {
-					ClientMain.RaiseErrorMessage("Critical error in handling packets.");
-					ClientMain.RaiseErrorMessage(e.Message);
+					ClientBot.RaiseErrorMessage("Critical error in handling packets.\n" + e.Message);
+					//ClientBot.RaiseErrorMessage(e.Message);
 				}
 			}
 		}
@@ -232,15 +232,15 @@ namespace ClassicBot {
         void Timeout() {
             try {
                 while (BaseSock.Connected) {
-                    if ((ClientMain.LastActive - DateTime.UtcNow).Seconds > 65) {
-                        ClientMain.RaiseErrorMessage("No message received for 65 seconds, Timed out.");
+                    if ((ClientBot.LastActive - DateTime.UtcNow).Seconds > 65) {
+                        ClientBot.RaiseErrorMessage("No message received for 65 seconds, Timed out.");
                         Disconnect();
                     }
+                    Thread.Sleep(1000);
                 }
             } catch (Exception e) {
                 if (e.GetType() != typeof(ThreadAbortException)) 
-                    ClientMain.RaiseErrorMessage(e.Message);
-                
+                    ClientBot.RaiseErrorMessage(e.Message);
             }
         }
     }

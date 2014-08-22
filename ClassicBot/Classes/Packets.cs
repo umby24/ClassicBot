@@ -1,16 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using ClassicBot.World;
 
 namespace ClassicBot.Classes {
 
     interface IPacket {
         byte Id { get; }
-        void Read(NetworkManager NM);
-        void Write(NetworkManager NM);
-        void Handle(NetworkManager NM, Main Core);
+        void Read(NetworkManager nm);
+        void Write(NetworkManager nm);
+        void Handle(NetworkManager nm, Bot core);
     }
 
     public struct Handshake : IPacket {
@@ -18,33 +16,33 @@ namespace ClassicBot.Classes {
         public byte Id { get { return 0; } }
         public byte ProtocolVersion { get; set; }
         public string Name { get; set; }
-        public string MOTD { get; set; }
+        public string Motd { get; set; }
         public byte Usertype { get; set; }
 
-        public void Read(NetworkManager NM) {
-            ProtocolVersion = NM.wSock.ReadByte();
-            Name = NM.wSock.ReadString();
-            MOTD = NM.wSock.ReadString();
-            Usertype = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            ProtocolVersion = nm.wSock.ReadByte();
+            Name = nm.wSock.ReadString();
+            Motd = nm.wSock.ReadString();
+            Usertype = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(ProtocolVersion);
-                NM.wSock.WriteString(Name);
-                NM.wSock.WriteString(MOTD);
-                NM.wSock.WriteByte(Usertype);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(ProtocolVersion);
+                nm.wSock.WriteString(Name);
+                nm.wSock.WriteString(Motd);
+                nm.wSock.WriteByte(Usertype);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-        	Core.RaiseInfoMessage("Connected to " + Name);
-			Core.RaiseInfoMessage("MOTD: " + MOTD);
+        public void Handle(NetworkManager nm, Bot core) {
+        	core.RaiseInfoMessage("Connected to " + Name);
+			core.RaiseInfoMessage("MOTD: " + Motd);
 
 			if (Usertype == 100)
-				Core.RaiseInfoMessage("You are an operator.");
+				core.RaiseInfoMessage("You are an operator.");
 
         }
     }
@@ -52,42 +50,42 @@ namespace ClassicBot.Classes {
     public struct Ping : IPacket {
         public byte Id { get { return 1; } }
 
-        public void Read(NetworkManager NM) {
+        public void Read(NetworkManager nm) {
 
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.LastActive = DateTime.UtcNow;
-            Core.RefreshLocation();
-            Core.RaisePingReceived();
+        public void Handle(NetworkManager nm, Bot core) {
+            core.LastActive = DateTime.UtcNow;
+            core.RefreshLocation();
+            core.RaisePingReceived();
         }
     }
 
     public struct LevelInit : IPacket {
         public byte Id { get { return 2; } }
 
-        public void Read(NetworkManager NM) {
+        public void Read(NetworkManager nm) {
 
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.ClientWorld.BlockArray = new byte[0];
-			Core.RaiseInfoMessage("Incoming Level");
-            Core.RaiseLevelInit();
+        public void Handle(NetworkManager nm, Bot core) {
+            core.ClientWorld.BlockArray = new byte[0];
+			core.RaiseInfoMessage("Incoming Level");
+            core.RaiseLevelInit();
         }
     }
 
@@ -97,31 +95,31 @@ namespace ClassicBot.Classes {
         public byte[] Data { get; set; }
         public byte Percent { get; set; }
 
-        public void Read(NetworkManager NM) {
-            Length = NM.wSock.ReadShort();
-            Data = NM.wSock.ReadByteArray();
-            Percent = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            Length = nm.wSock.ReadShort();
+            Data = nm.wSock.ReadByteArray();
+            Percent = nm.wSock.ReadByte();
         }
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(Length);
-                NM.wSock.WriteByteArray(Data);
-                NM.wSock.WriteByte(Percent);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(Length);
+                nm.wSock.WriteByteArray(Data);
+                nm.wSock.WriteByte(Percent);
+                nm.wSock.Purge();
             }
         }
-        public void Handle(NetworkManager NM, Main Core) {
-            var Temp = Core.ClientWorld.BlockArray;
-            Core.ClientWorld.BlockArray = new byte[Temp.Length + Length];
+        public void Handle(NetworkManager nm, Bot core) {
+            var temp = core.ClientWorld.BlockArray;
+            core.ClientWorld.BlockArray = new byte[temp.Length + Length];
 
-			Buffer.BlockCopy(Temp, 0, Core.ClientWorld.BlockArray, 0, Temp.Length);
-            Buffer.BlockCopy(Data, 0, Core.ClientWorld.BlockArray, Temp.Length, Length);
+			Buffer.BlockCopy(temp, 0, core.ClientWorld.BlockArray, 0, temp.Length);
+            Buffer.BlockCopy(Data, 0, core.ClientWorld.BlockArray, temp.Length, Length);
 
-			Temp = null;
+			temp = null;
 
-			Core.RaiseDebugMessage("Map chunk size: " + Length.ToString() + " Percent: " + Percent.ToString());
-            Core.RaiseLevelProgress(Percent);
+			core.RaiseDebugMessage("Map chunk size: " + Length + " Percent: " + Percent);
+            core.RaiseLevelProgress(Percent);
         }
     }
 
@@ -132,38 +130,36 @@ namespace ClassicBot.Classes {
         public short SizeY { get; set; }
         public short SizeZ { get; set; }
 
-        public void Read(NetworkManager NM) {
-            SizeX = NM.wSock.ReadShort();
-            SizeZ = NM.wSock.ReadShort();
-            SizeY = NM.wSock.ReadShort();
+        public void Read(NetworkManager nm) {
+            SizeX = nm.wSock.ReadShort();
+            SizeZ = nm.wSock.ReadShort();
+            SizeY = nm.wSock.ReadShort();
         }
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(SizeX);
-                NM.wSock.WriteShort(SizeZ);
-                NM.wSock.WriteShort(SizeY);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(SizeX);
+                nm.wSock.WriteShort(SizeZ);
+                nm.wSock.WriteShort(SizeY);
+                nm.wSock.Purge();
             }
         }
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.ClientWorld.BlockArray = GZip.UnGZip(Core.ClientWorld.BlockArray);
+        public void Handle(NetworkManager nm, Bot core) {
+            core.ClientWorld.BlockArray = GZip.UnGZip(core.ClientWorld.BlockArray);
 
-            int BlockArraySize = BitConverter.ToInt32(Core.ClientWorld.BlockArray, 0);
-            Core.RaiseDebugMessage("Block array size: " + BlockArraySize.ToString());
+            int blockArraySize = BitConverter.ToInt32(new[] { core.ClientWorld.BlockArray[3], core.ClientWorld.BlockArray[2], core.ClientWorld.BlockArray[1], core.ClientWorld.BlockArray[0] }, 0);
+            core.ClientWorld.RemoveSize();
 
-            Core.ClientWorld.RemoveSize();
+            core.ClientWorld.MapSize = new Vector3S {X = SizeX, Y = SizeZ, Z = SizeY};
 
-            Core.ClientWorld.MapSize = new Vector3s();
-            Core.ClientWorld.MapSize.X = SizeX;
-            Core.ClientWorld.MapSize.Y = SizeZ;
-            Core.ClientWorld.MapSize.Z = SizeY;
+            core.RaiseInfoMessage("Map complete.");
 
-			Core.RaiseInfoMessage("Map complete.");
-            Core.RaiseDebugMessage("Level Finalize size: " + SizeX.ToString() + " " + SizeY.ToString() + " " + SizeZ.ToString());
-            Core.RaiseLevelComplete(SizeX, SizeY, SizeZ);
+            if ((SizeX * SizeY * SizeZ) != blockArraySize)
+                core.RaiseErrorMessage(string.Format("Protocol Error: Map data length != Finalize length ({0} - {1})", blockArraySize, (SizeX * SizeY * SizeZ)));
 
-            Core.ClientWorld.WorldCheck(Core);
+            core.RaiseLevelComplete(SizeX, SizeY, SizeZ);
+
+            core.ClientWorld.WorldCheck(core);
         }
     }
 
@@ -175,27 +171,27 @@ namespace ClassicBot.Classes {
         public byte Mode { get; set; }
         public byte Block { get; set; }
 
-        public void Read(NetworkManager NM) {
-            X = NM.wSock.ReadShort();
-            Z = NM.wSock.ReadShort();
-            Y = NM.wSock.ReadShort();
-            Mode = NM.wSock.ReadByte();
-            Block = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            X = nm.wSock.ReadShort();
+            Z = nm.wSock.ReadShort();
+            Y = nm.wSock.ReadShort();
+            Mode = nm.wSock.ReadByte();
+            Block = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(X);
-                NM.wSock.WriteShort(Z);
-                NM.wSock.WriteShort(Y);
-                NM.wSock.WriteByte(Mode);
-                NM.wSock.WriteByte(Block);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(X);
+                nm.wSock.WriteShort(Z);
+                nm.wSock.WriteShort(Y);
+                nm.wSock.WriteByte(Mode);
+                nm.wSock.WriteByte(Block);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
             // -- Client to server only
         }
     }
@@ -207,31 +203,31 @@ namespace ClassicBot.Classes {
         public short Z { get; set; }
         public byte Block { get; set; }
 
-        public void Read(NetworkManager NM) {
-            X = NM.wSock.ReadShort();
-            Z = NM.wSock.ReadShort();
-            Y = NM.wSock.ReadShort();
-            Block = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            X = nm.wSock.ReadShort();
+            Z = nm.wSock.ReadShort();
+            Y = nm.wSock.ReadShort();
+            Block = nm.wSock.ReadByte();
         }
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(X);
-                NM.wSock.WriteShort(Z);
-                NM.wSock.WriteShort(Y);
-                NM.wSock.WriteByte(Block);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(X);
+                nm.wSock.WriteShort(Z);
+                nm.wSock.WriteShort(Y);
+                nm.wSock.WriteByte(Block);
+                nm.wSock.Purge();
             }
         }
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.ClientWorld.UpdateBlock(X, Y, Z, Block);
-            Core.RaiseBlockChange(X, Y, Z);
+        public void Handle(NetworkManager nm, Bot core) {
+            core.ClientWorld.UpdateBlock(X, Y, Z, Block);
+            core.RaiseBlockChange(X, Y, Z);
         }
     }
 
     public struct SpawnPlayer : IPacket {
         public byte Id { get { return 7; } }
-        public sbyte PlayerID { get; set; }
+        public sbyte PlayerId { get; set; }
         public string PlayerName { get; set; }
         public short X { get; set; }
         public short Y { get; set; }
@@ -239,255 +235,279 @@ namespace ClassicBot.Classes {
         public byte Yaw { get; set; }
         public byte Pitch { get; set; }
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
-            PlayerName = NM.wSock.ReadString();
-            X = NM.wSock.ReadShort();
-            Z = NM.wSock.ReadShort();
-            Y = NM.wSock.ReadShort();
-            Yaw = NM.wSock.ReadByte();
-            Pitch = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
+            PlayerName = nm.wSock.ReadString();
+            X = nm.wSock.ReadShort();
+            Z = nm.wSock.ReadShort();
+            Y = nm.wSock.ReadShort();
+            Yaw = nm.wSock.ReadByte();
+            Pitch = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteSByte(PlayerID);
-                NM.wSock.WriteString(PlayerName);
-                NM.wSock.WriteShort(X);
-                NM.wSock.WriteShort(Z);
-                NM.wSock.WriteShort(Y);
-                NM.wSock.WriteByte(Yaw);
-                NM.wSock.WriteByte(Pitch);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteSByte(PlayerId);
+                nm.wSock.WriteString(PlayerName);
+                nm.wSock.WriteShort(X);
+                nm.wSock.WriteShort(Z);
+                nm.wSock.WriteShort(Y);
+                nm.wSock.WriteByte(Yaw);
+                nm.wSock.WriteByte(Pitch);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            if (PlayerID != -1) {
-                var NewEnt = new Entity(PlayerName, PlayerID, X, Y, Z, Yaw, Pitch);
-                Core.Entities.Add(NewEnt);
-                Core.RaisePlayerJoin(NewEnt);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (PlayerId != -1) {
+                var newEnt = new Entity(PlayerName, PlayerId, X, Y, Z, Yaw, Pitch);
+                core.Entities.Add(PlayerId, newEnt);
+                core.RaisePlayerJoin(newEnt);
+            }
+            else {
+                core.Location.X = X;
+                core.Location.Y = Y;
+                core.Location.Z = Z;
+                core.Position[0] = Yaw;
+                core.Position[1] = Pitch;
+                core.RaiseYouMoved();
             }
         }
     }
 
     public struct PlayerTeleport : IPacket {
         public byte Id { get { return 8; } }
-        public sbyte PlayerID { get; set; }
+        public sbyte PlayerId { get; set; }
         public short X { get; set; }
         public short Y { get; set; }
         public short Z { get; set; }
-        public byte yaw { get; set; }
-        public byte pitch { get; set; }
+        public byte Yaw { get; set; }
+        public byte Pitch { get; set; }
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
-            X = NM.wSock.ReadShort();
-            Z = NM.wSock.ReadShort();
-            Y = NM.wSock.ReadShort();
-            yaw = NM.wSock.ReadByte();
-            pitch = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
+            X = nm.wSock.ReadShort();
+            Z = nm.wSock.ReadShort();
+            Y = nm.wSock.ReadShort();
+            Yaw = nm.wSock.ReadByte();
+            Pitch = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteSByte(PlayerID);
-                NM.wSock.WriteShort(X);
-                NM.wSock.WriteShort(Z);
-                NM.wSock.WriteShort(Y);
-                NM.wSock.WriteByte(yaw);
-                NM.wSock.WriteByte(pitch);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteSByte(PlayerId);
+                nm.wSock.WriteShort(X);
+                nm.wSock.WriteShort(Z);
+                nm.wSock.WriteShort(Y);
+                nm.wSock.WriteByte(Yaw);
+                nm.wSock.WriteByte(Pitch);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            var MyEntity = Entity.GetEntitybyID(PlayerID, Core.Entities);
-
-            if (MyEntity != null) {
-                MyEntity.UpdateLocation(X, Y, Z);
-                MyEntity.UpdateLook(yaw, pitch);
-                Core.RaisePlayerMoved(MyEntity);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.Entities.ContainsKey(PlayerId)) {
+                core.RaiseErrorMessage("Protocol Warning: Teleported non-existant player");
+                return;
             }
 
-            if (PlayerID == -1) {
-                Core.Location.X = X;
-                Core.Location.Y = Y;
-                Core.Location.Z = Z;
-                Core.Position[0] = yaw;
-                Core.Position[1] = pitch;
-                Core.RaiseYouMoved();
+            if (PlayerId != -1) {
+                core.Entities[PlayerId].UpdateLocation(X, Y, Z);
+                core.Entities[PlayerId].UpdateLook(Yaw, Pitch);
+                core.RaisePlayerMoved(core.Entities[PlayerId]);
+                return;
             }
+
+            core.Location.X = X;
+            core.Location.Y = Y;
+            core.Location.Z = Z;
+            core.Position[0] = Yaw;
+            core.Position[1] = Pitch;
+            core.RaiseYouMoved();
         }
     }
 
     public struct PosAndOrient : IPacket {
         public byte Id { get { return 9; } }
-        public sbyte PlayerID { get; set; }
+        public sbyte PlayerId { get; set; }
         public short ChangeX { get; set; }
         public short ChangeY { get; set; }
         public short ChangeZ { get; set; }
-        public byte yaw { get; set; }
-        public byte pitch { get; set; }
+        public byte Yaw { get; set; }
+        public byte Pitch { get; set; }
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
-            ChangeX = NM.wSock.ReadShort();
-            ChangeZ = NM.wSock.ReadShort();
-            ChangeY = NM.wSock.ReadShort();
-            yaw = NM.wSock.ReadByte();
-            pitch = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
+            ChangeX = nm.wSock.ReadShort();
+            ChangeZ = nm.wSock.ReadShort();
+            ChangeY = nm.wSock.ReadShort();
+            Yaw = nm.wSock.ReadByte();
+            Pitch = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteSByte(PlayerID);
-                NM.wSock.WriteShort(ChangeX);
-                NM.wSock.WriteShort(ChangeZ);
-                NM.wSock.WriteShort(ChangeY);
-                NM.wSock.WriteByte(yaw);
-                NM.wSock.WriteByte(pitch);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteSByte(PlayerId);
+                nm.wSock.WriteShort(ChangeX);
+                nm.wSock.WriteShort(ChangeZ);
+                nm.wSock.WriteShort(ChangeY);
+                nm.wSock.WriteByte(Yaw);
+                nm.wSock.WriteByte(Pitch);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            var MyEntity = Entity.GetEntitybyID(PlayerID, Core.Entities);
-
-            if (MyEntity != null) {
-                MyEntity.UpdateLocation((short)(MyEntity.Location.X + ChangeX), (short)(MyEntity.Location.Y + ChangeY), (short)(MyEntity.Location.Z + ChangeZ));
-                MyEntity.UpdateLook(yaw, pitch);
-                Core.RaisePlayerMoved(MyEntity);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.Entities.ContainsKey(PlayerId)) {
+                core.RaiseErrorMessage("Protocol Warning: Updated Pos+look of non-existant player");
+                return;
             }
 
-            if (PlayerID == -1) {
-                Core.Location.X += ChangeX;
-                Core.Location.Y += ChangeY;
-                Core.Location.Z += ChangeZ;
-                Core.Position[0] = yaw;
-                Core.Position[1] = pitch;
-                Core.RaiseYouMoved();
+            if (PlayerId != -1) {
+                var myEntity = core.Entities[PlayerId];
+                myEntity.UpdateLocation((short)(myEntity.Location.X + ChangeX), (short)(myEntity.Location.Y + ChangeY), (short)(myEntity.Location.Z + ChangeZ));
+                myEntity.UpdateLook(Yaw, Pitch);
+                core.RaisePlayerMoved(myEntity);
+                return;
             }
+
+            core.Location.X += ChangeX;
+            core.Location.Y += ChangeY;
+            core.Location.Z += ChangeZ;
+            core.Position[0] = Yaw;
+            core.Position[1] = Pitch;
+            core.RaiseYouMoved();
         }
     }
 
     public struct PositionUpdate : IPacket {
         public byte Id { get { return 10; } }
-        public sbyte PlayerID { get; set; }
+        public sbyte PlayerId { get; set; }
         public short ChangeX { get; set; }
         public short ChangeY { get; set; }
         public short ChangeZ { get; set; }
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
-            ChangeX = NM.wSock.ReadShort();
-            ChangeZ = NM.wSock.ReadShort();
-            ChangeY = NM.wSock.ReadShort();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
+            ChangeX = nm.wSock.ReadShort();
+            ChangeZ = nm.wSock.ReadShort();
+            ChangeY = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
+        public void Write(NetworkManager nm) {
 
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            var MyEntity = Entity.GetEntitybyID(PlayerID, Core.Entities);
-
-            if (MyEntity != null) {
-                MyEntity.UpdateLocation((short)(MyEntity.Location.X + ChangeX), (short)(MyEntity.Location.Y + ChangeY), (short)(MyEntity.Location.Z + ChangeZ));
-                Core.RaisePlayerMoved(MyEntity);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.Entities.ContainsKey(PlayerId)) {
+                core.RaiseErrorMessage("Protocol Warning: Updated position of non-existant player");
+                return;
             }
 
-            if (PlayerID == -1) {
-                Core.Location.X += ChangeX;
-                Core.Location.Y += ChangeY;
-                Core.Location.Z += ChangeZ;
-                Core.RaiseYouMoved();
+            var myEntity = core.Entities[PlayerId];
+
+            if (PlayerId != -1) {
+                myEntity.UpdateLocation((short)(myEntity.Location.X + ChangeX), (short)(myEntity.Location.Y + ChangeY), (short)(myEntity.Location.Z + ChangeZ));
+                core.RaisePlayerMoved(myEntity);
             }
+
+            core.Location.X += ChangeX;
+            core.Location.Y += ChangeY;
+            core.Location.Z += ChangeZ;
+            core.RaiseYouMoved();
         }
     }
 
     public struct OrientationUpdate : IPacket {
         public byte Id { get { return 11; } }
-        public sbyte PlayerID { get; set; }
+        public sbyte PlayerId { get; set; }
         public byte Yaw { get; set; }
         public byte Pitch { get; set; }
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
-            Yaw = NM.wSock.ReadByte();
-            Pitch = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
+            Yaw = nm.wSock.ReadByte();
+            Pitch = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
+        public void Write(NetworkManager nm) {
 
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            var MyEntity = Entity.GetEntitybyID(PlayerID, Core.Entities);
-
-            if (MyEntity != null) {
-                MyEntity.UpdateLook(Yaw, Pitch);
-                Core.RaisePlayerMoved(MyEntity);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.Entities.ContainsKey(PlayerId)) {
+                core.RaiseErrorMessage("Protocol Warning: Updated orientation of non-existant player");
+                return;
             }
 
-            if (PlayerID == -1) {
-                Core.Position[0] = Yaw;
-                Core.Position[1] = Pitch;
-                Core.RaiseYouMoved();
+            var myEntity = core.Entities[PlayerId];
+
+            if (PlayerId != -1) {
+                myEntity.UpdateLook(Yaw, Pitch);
+                core.RaisePlayerMoved(myEntity);
+                return;
+                
             }
+
+            core.Position[0] = Yaw;
+            core.Position[1] = Pitch;
+            core.RaiseYouMoved();
         }
     }
 
     public struct DespawnPlayer : IPacket {
         public byte Id { get { return 12; } }
-        public sbyte PlayerID;
+        public sbyte PlayerId;
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteSByte(PlayerID);
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteSByte(PlayerId);
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            var MyEntity = Entity.GetEntitybyID(PlayerID, Core.Entities);
-
-            if (MyEntity != null) {
-                Core.Entities.Remove(MyEntity);
-                Core.RaisePlayerLeft(MyEntity);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.Entities.ContainsKey(PlayerId)) {
+                core.RaiseErrorMessage("Protocol Warning: Despawned non-existant entity.");
+                return;
                 
             }
+            var myEntity = core.Entities[PlayerId];
+
+            core.Entities.Remove(PlayerId);
+            core.RaisePlayerLeft(myEntity);
+            
         }
     }
 
     public struct Message : IPacket {
         public byte Id { get { return 13; } }
-        public sbyte PlayerID { get; set; }
+        public sbyte PlayerId { get; set; }
         public string Text { get; set; }
 
-        public void Read(NetworkManager NM) {
-            PlayerID = NM.wSock.ReadSByte();
-            Text = NM.wSock.ReadString();
+        public void Read(NetworkManager nm) {
+            PlayerId = nm.wSock.ReadSByte();
+            Text = nm.wSock.ReadString();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteSByte(PlayerID);
-                NM.wSock.WriteString(Text);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteSByte(PlayerId);
+                nm.wSock.WriteString(Text);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.RaiseChatMessage(Text);
+        public void Handle(NetworkManager nm, Bot core) {
+            core.RaiseChatMessage(Text);
         }
     }
 
@@ -495,20 +515,20 @@ namespace ClassicBot.Classes {
         public byte Id { get { return 14; } }
         public string Reason { get; set; }
 
-        public void Read(NetworkManager NM) {
-            Reason = NM.wSock.ReadString();
+        public void Read(NetworkManager nm) {
+            Reason = nm.wSock.ReadString();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteString(Reason);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteString(Reason);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.RaiseDisconnected(Reason);
+        public void Handle(NetworkManager nm, Bot core) {
+            core.RaiseDisconnected(Reason);
         }
     }
 
@@ -516,20 +536,20 @@ namespace ClassicBot.Classes {
         public byte Id { get { return 14; } }
         public byte Rank { get; set; }
 
-        public void Read(NetworkManager NM) {
-            Rank = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            Rank = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(Rank);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(Rank);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.RaiseAuthChange(Rank);   
+        public void Handle(NetworkManager nm, Bot core) {
+            core.RaiseAuthChange(Rank);   
         }
     }
 
@@ -538,26 +558,29 @@ namespace ClassicBot.Classes {
         public string AppName { get; set; }
         public short ExtensionCount { get; set; }
 
-        public void Read(NetworkManager NM) {
-            AppName = NM.wSock.ReadString();
-            ExtensionCount = NM.wSock.ReadShort();
+        public void Read(NetworkManager nm) {
+            AppName = nm.wSock.ReadString();
+            ExtensionCount = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteString(AppName);
-                NM.wSock.WriteShort(ExtensionCount);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteString(AppName);
+                nm.wSock.WriteShort(ExtensionCount);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.SupportsCPE = true;
-            Core.ServerAppName = AppName;
-            Core.Extensions = ExtensionCount;
-            Core.ServerExtensions = new Dictionary<string, int>();
-            Core.RaiseDebugMessage("Connecting to " + AppName + " with " + ExtensionCount.ToString() + " extensions.");
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received Extinfo while CPE Disabled.");
+
+            core.SupportsCpe = true;
+            core.ServerAppName = AppName;
+            core.Extensions = ExtensionCount;
+            core.ServerExtensions = new Dictionary<string, int>();
+            core.RaiseDebugMessage("Connecting to " + AppName + " with " + ExtensionCount + " extensions.");
         }
     }
 
@@ -566,33 +589,36 @@ namespace ClassicBot.Classes {
         public string ExtName { get; set; }
         public int Version { get; set; }
 
-        public void Read(NetworkManager NM) {
-            ExtName = NM.wSock.ReadString();
-            Version = NM.wSock.ReadInt();
+        public void Read(NetworkManager nm) {
+            ExtName = nm.wSock.ReadString();
+            Version = nm.wSock.ReadInt();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteString(ExtName);
-                NM.wSock.WriteInt(Version);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteString(ExtName);
+                nm.wSock.WriteInt(Version);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.ReceivedExtensions += 1;
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received Extentry while CPE Disabled.");
 
-            if (Core.ReceivedExtensions > Core.Extensions) 
-                Core.RaiseInfoMessage("Warning: Server sent more extensions than ExtInfo reported.");
+            core.ReceivedExtensions += 1;
 
-            if (!Core.ServerExtensions.ContainsKey(ExtName))
-                Core.ServerExtensions.Add(ExtName, Version);
+            if (core.ReceivedExtensions > core.Extensions) 
+                core.RaiseInfoMessage("Warning: Server sent more extensions than ExtInfo reported.");
 
-            Core.RaiseDebugMessage("Received ExtEntry: " + ExtName + " -- " + Version.ToString());
+            if (!core.ServerExtensions.ContainsKey(ExtName))
+                core.ServerExtensions.Add(ExtName, Version);
 
-            if (Core.ReceivedExtensions == Core.Extensions) 
-                NM.SendCPE();
+            core.RaiseDebugMessage("Received ExtEntry: " + ExtName + " -- " + Version.ToString());
+
+            if (core.ReceivedExtensions == core.Extensions) 
+                nm.SendCPE();
         }
     }
 
@@ -600,21 +626,27 @@ namespace ClassicBot.Classes {
         public byte Id { get { return 18; } }
         public short Distance { get; set; }
 
-        public void Read(NetworkManager NM) {
-            Distance = NM.wSock.ReadShort();
+        public void Read(NetworkManager nm) {
+            Distance = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(Distance);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(Distance);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.ClickDistance = Distance;
-            Core.RaiseClickDistanceSet(Distance);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received SetClickDistance while CPE Disabled.");
+
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.ClickDistance))
+                core.RaiseErrorMessage("Protocol error: Received SetClickDistance, which client does not support.");
+
+            core.ClickDistance = Distance;
+            core.RaiseClickDistanceSet(Distance);
         }
     }
 
@@ -622,26 +654,31 @@ namespace ClassicBot.Classes {
         public byte Id { get { return 19; } }
         public byte SupportLevel { get; set; }
 
-        public void Read(NetworkManager NM) {
-            SupportLevel = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            SupportLevel = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(SupportLevel);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(SupportLevel);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.ServerCBLevel = SupportLevel;
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received CBSL while CPE Disabled.");
 
-            var myCB = new CustomBlockSupportLevel();
-            myCB.SupportLevel = Main.CustomBlockSuportlevel;
-            myCB.Write(NM);
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.CustomBlocks))
+                core.RaiseErrorMessage("Protocol error: Received CBSL, which client does not support.");
 
-            Core.RaiseDebugMessage("Received CustomBlockSupportLevel.");
+            core.ServerCbLevel = SupportLevel;
+
+            var myCb = new CustomBlockSupportLevel {SupportLevel = Bot.CustomBlockSuportlevel};
+            myCb.Write(nm);
+
+            core.RaiseDebugMessage("Received CustomBlockSupportLevel.");
         }
     }
 
@@ -650,24 +687,30 @@ namespace ClassicBot.Classes {
         public byte BlockToHold { get; set; }
         public byte PreventChange { get; set; }
 
-        public void Read(NetworkManager NM) {
-            BlockToHold = NM.wSock.ReadByte();
-            PreventChange = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            BlockToHold = nm.wSock.ReadByte();
+            PreventChange = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(BlockToHold);
-                NM.wSock.WriteByte(PreventChange);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(BlockToHold);
+                nm.wSock.WriteByte(PreventChange);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            Core.HeldBlock = BlockToHold;
-            Core.CanChangeBlock = (PreventChange > 0);
-            Core.RaiseHeldBlockChange(BlockToHold, PreventChange);
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received Holdthis while CPE Disabled.");
+
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.HeldBlock))
+                core.RaiseErrorMessage("Protocol error: Received HoldThis, which client does not support.");
+
+            core.HeldBlock = BlockToHold;
+            core.CanChangeBlock = (PreventChange > 0);
+            core.RaiseHeldBlockChange(BlockToHold, PreventChange);
         }
     }
 
@@ -678,113 +721,163 @@ namespace ClassicBot.Classes {
         public int KeyCode { get; set; }
         public byte KeyMods { get; set; }
 
-        public void Read(NetworkManager NM) {
-            Label = NM.wSock.ReadString();
-            Action = NM.wSock.ReadString();
-            KeyCode = NM.wSock.ReadInt();
-            KeyMods = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            Label = nm.wSock.ReadString();
+            Action = nm.wSock.ReadString();
+            KeyCode = nm.wSock.ReadInt();
+            KeyMods = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteString(Label);
-                NM.wSock.WriteString(Action);
-                NM.wSock.WriteInt(KeyCode);
-                NM.wSock.WriteByte(KeyMods);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteString(Label);
+                nm.wSock.WriteString(Action);
+                nm.wSock.WriteInt(KeyCode);
+                nm.wSock.WriteByte(KeyMods);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
-            var myHotkey = new TextHotKeyEntry();
-            myHotkey.Label = Label;
-            myHotkey.Action = Action;
-            myHotkey.Keycode = KeyCode;
-            myHotkey.Modifier = (HotkeyModifier)KeyMods;
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received SetTextHotKey while CPE Disabled.");
 
-            if (Core.Hotkeys == null)
-                Core.Hotkeys = new List<TextHotKeyEntry>();
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.CustomBlocks))
+                core.RaiseErrorMessage("Protocol error: Received SetTextHotKey, which client does not support.");
 
-            Core.Hotkeys.Add(myHotkey);
-            Core.RaiseHotkeyAdded();
+            var myHotkey = new TextHotKeyEntry {
+                Label = Label,
+                Action = Action,
+                Keycode = KeyCode,
+                Modifier = (HotkeyModifier) KeyMods
+            };
+
+            if (core.Hotkeys == null)
+                core.Hotkeys = new List<TextHotKeyEntry>();
+
+            core.Hotkeys.Add(myHotkey);
+            core.RaiseHotkeyAdded();
         }
     }
 
     public struct ExtAddPlayerName : IPacket {
         public byte Id { get { return 22; } }
-        public short NameID { get; set; }
+        public short NameId { get; set; }
         public string PlayerName { get; set; }
         public string ListName { get; set; }
         public string GroupName { get; set; }
         public byte GroupRank { get; set; }
 
-        public void Read(NetworkManager NM) {
-            NameID = NM.wSock.ReadShort();
-            PlayerName = NM.wSock.ReadString();
-            ListName = NM.wSock.ReadString();
-            GroupName = NM.wSock.ReadString();
-            GroupRank = NM.wSock.ReadByte();
+        public void Read(NetworkManager nm) {
+            NameId = nm.wSock.ReadShort();
+            PlayerName = nm.wSock.ReadString();
+            ListName = nm.wSock.ReadString();
+            GroupName = nm.wSock.ReadString();
+            GroupRank = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(NameID);
-                NM.wSock.WriteString(PlayerName);
-                NM.wSock.WriteString(ListName);
-                NM.wSock.WriteString(GroupName);
-                NM.wSock.WriteByte(GroupRank);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(NameId);
+                nm.wSock.WriteString(PlayerName);
+                nm.wSock.WriteString(ListName);
+                nm.wSock.WriteString(GroupName);
+                nm.wSock.WriteByte(GroupRank);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received ExtAddPlayerName while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.ExtPlayerList))
+                core.RaiseErrorMessage("Protocol error: Received ExtPlayerList packet, which client does not support.");
+
+            var newEntry = new ExtPlayerListEntry {
+                NameId = NameId,
+                PlayerName = PlayerName,
+                ListName = ListName,
+                GroupName = GroupName,
+                GroupRank = GroupRank
+            };
+
+            if (!core.NumberPlayerList.ContainsKey(NameId)) {
+                core.ExtPlayerList.Add(PlayerName, newEntry);
+                core.NumberPlayerList.Add(NameId, newEntry);
+            }
+            else {
+                core.ExtPlayerList.Remove(core.NumberPlayerList[NameId].PlayerName);
+                core.ExtPlayerList.Add(PlayerName, newEntry);
+                core.NumberPlayerList[NameId] = newEntry;
+            }
+
+            core.RaiseExtPlayerListUpdate();
         }
     }
 
     public struct ExtAddEntity : IPacket {
         public byte Id { get { return 23; } }
-        public byte EntityID { get; set; }
+        public byte EntityId { get; set; }
         public string InGameName { get; set; }
         public string SkinName { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            EntityId = nm.wSock.ReadByte();
+            InGameName = nm.wSock.ReadString();
+            SkinName = nm.wSock.ReadString();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(EntityID);
-                NM.wSock.WriteString(InGameName);
-                NM.wSock.WriteString(SkinName);
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(EntityId);
+                nm.wSock.WriteString(InGameName);
+                nm.wSock.WriteString(SkinName);
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received ExtAddEntity while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.ExtPlayerList))
+                core.RaiseErrorMessage("Protocol error: Received ExtPlayerList packet, which client does not support.");
         }
     }
     public struct ExtRemovePlayerName : IPacket {
         public byte Id { get { return 24; } }
-        public short NameID { get; set; }
+        public short NameId { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            NameId = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteShort(NameID);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteShort(NameId);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received ExtRemovePlayerName while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.ExtPlayerList))
+                core.RaiseErrorMessage("Protocol error: Received ExtPlayerList packet, which client does not support.");
+
+            if (!core.NumberPlayerList.ContainsKey(NameId)) {
+                core.RaiseErrorMessage("Protocol error: Received ExtRemovePlayerName for non-existant Name ID.");
+            }
+            else {
+                core.ExtPlayerList.Remove(core.NumberPlayerList[NameId].PlayerName);
+                core.NumberPlayerList.Remove(NameId);
+                core.RaiseExtPlayerListUpdate();
+            }
         }
     }
 
@@ -795,29 +888,36 @@ namespace ClassicBot.Classes {
         public short Green { get; set; }
         public short Blue { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            ColorType = nm.wSock.ReadByte();
+            Red = nm.wSock.ReadShort();
+            Green = nm.wSock.ReadShort();
+            Blue = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(ColorType);
-                NM.wSock.WriteShort(Red);
-                NM.wSock.WriteShort(Green);
-                NM.wSock.WriteShort(Blue);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(ColorType);
+                nm.wSock.WriteShort(Red);
+                nm.wSock.WriteShort(Green);
+                nm.wSock.WriteShort(Blue);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received EnvSetColor while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.EnvColors))
+                core.RaiseErrorMessage("Protocol error: Received EnvColors packet, which client does not support.");
         }
     }
 
     public struct MakeSelection : IPacket {
         public byte Id { get { return 26; } }
-        public byte SelectionID { get; set; }
+        public byte SelectionId { get; set; }
         public string Label { get; set; }
         public short StartX { get; set; }
         public short StartY { get; set; }
@@ -830,52 +930,71 @@ namespace ClassicBot.Classes {
         public short Blue { get; set; }
         public short Opacity { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            SelectionId = nm.wSock.ReadByte();
+            Label = nm.wSock.ReadString();
+            StartX = nm.wSock.ReadShort();
+            StartZ = nm.wSock.ReadShort();
+            StartY = nm.wSock.ReadShort();
+            EndX = nm.wSock.ReadShort();
+            EndZ = nm.wSock.ReadShort();
+            EndY = nm.wSock.ReadShort();
+            Red = nm.wSock.ReadShort();
+            Green = nm.wSock.ReadShort();
+            Blue = nm.wSock.ReadShort();
+            Opacity = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(SelectionID);
-                NM.wSock.WriteString(Label);
-                NM.wSock.WriteShort(StartX);
-                NM.wSock.WriteShort(StartZ);
-                NM.wSock.WriteShort(StartY);
-                NM.wSock.WriteShort(EndX);
-                NM.wSock.WriteShort(EndZ);
-                NM.wSock.WriteShort(EndY);
-                NM.wSock.WriteShort(Red);
-                NM.wSock.WriteShort(Green);
-                NM.wSock.WriteShort(Blue);
-                NM.wSock.WriteShort(Opacity);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(SelectionId);
+                nm.wSock.WriteString(Label);
+                nm.wSock.WriteShort(StartX);
+                nm.wSock.WriteShort(StartZ);
+                nm.wSock.WriteShort(StartY);
+                nm.wSock.WriteShort(EndX);
+                nm.wSock.WriteShort(EndZ);
+                nm.wSock.WriteShort(EndY);
+                nm.wSock.WriteShort(Red);
+                nm.wSock.WriteShort(Green);
+                nm.wSock.WriteShort(Blue);
+                nm.wSock.WriteShort(Opacity);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received MakeSelection while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.SelectionCuboid))
+                core.RaiseErrorMessage("Protocol error: Received SelectionCuboid packet, which client does not support.");
         }
     }
 
     public struct RemoveSelection : IPacket {
         public byte Id { get { return 27; } }
-        public byte SelectionID { get; set; }
+        public byte SelectionId { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            SelectionId = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(SelectionID);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(SelectionId);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received RemoveSelection while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.SelectionCuboid))
+                core.RaiseErrorMessage("Protocol error: Received SelectionCuboid packet, which client does not support.");
         }
     }
 
@@ -885,91 +1004,116 @@ namespace ClassicBot.Classes {
         public byte AllowPlacement { get; set; }
         public byte AllowDeletion { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            BlockType = nm.wSock.ReadByte();
+            AllowPlacement = nm.wSock.ReadByte();
+            AllowDeletion = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(BlockType);
-                NM.wSock.WriteByte(AllowPlacement);
-                NM.wSock.WriteByte(AllowDeletion);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(BlockType);
+                nm.wSock.WriteByte(AllowPlacement);
+                nm.wSock.WriteByte(AllowDeletion);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received SetBlockPermissions while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.BlockPermissions))
+                core.RaiseErrorMessage("Protocol error: Received BlockPermissions packet, which client does not support.");
+
+            if (BlockType > 49 && !core.ClientSupportedExtensions.Contains(CPEExtensions.CustomBlocks))
+                core.RaiseErrorMessage("Protocol error: SetBlockPermissions on block > 49 while custom blocks not supported.");
         }
     }
 
     public struct ChangeModel : IPacket {
         public byte Id { get { return 29; } }
-        public byte EntityID { get; set; }
+        public byte EntityId { get; set; }
         public string ModelName { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            EntityId = nm.wSock.ReadByte();
+            ModelName = nm.wSock.ReadString();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(EntityID);
-                NM.wSock.WriteString(ModelName);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(EntityId);
+                nm.wSock.WriteString(ModelName);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received ChangeModel while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.ChangeModel))
+                core.RaiseErrorMessage("Protocol error: Received ChangeModel packet, which client does not support.");
         }
     }
     public struct EnvSetMapAppearance : IPacket {
         public byte Id { get { return 30; } }
-        public string TextureURL { get; set; }
+        public string TextureUrl { get; set; }
         public byte SideBlock { get; set; }
         public byte EdgeBlock { get; set; }
         public short SideLevel { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            TextureUrl = nm.wSock.ReadString();
+            SideBlock = nm.wSock.ReadByte();
+            EdgeBlock = nm.wSock.ReadByte();
+            SideLevel = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteString(TextureURL);
-                NM.wSock.WriteByte(SideBlock);
-                NM.wSock.WriteByte(EdgeBlock);
-                NM.wSock.WriteShort(SideLevel);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteString(TextureUrl);
+                nm.wSock.WriteByte(SideBlock);
+                nm.wSock.WriteByte(EdgeBlock);
+                nm.wSock.WriteShort(SideLevel);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received EnvSetMapAppearance while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.EnvMapAppearance))
+                core.RaiseErrorMessage("Protocol error: Received EnvMapAppearances packet, which client does not support.");
         }
     }
     public struct EnvSetWeatherType : IPacket {
         public byte Id { get { return 31; } }
         public byte WeatherType { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            WeatherType = nm.wSock.ReadByte();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(WeatherType);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(WeatherType);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received EnvSetWeatherType while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.EnvWeatherType))
+                core.RaiseErrorMessage("Protocol error: Received EnvWeatherType packet, which client does not support.");
         }
     }
     public struct HackControl : IPacket {
@@ -981,25 +1125,34 @@ namespace ClassicBot.Classes {
         public byte ThirdPerson { get; set; }
         public short JumpHeight { get; set; }
 
-        public void Read(NetworkManager NM) {
-
+        public void Read(NetworkManager nm) {
+            Flying = nm.wSock.ReadByte();
+            NoClip = nm.wSock.ReadByte();
+            Speeding = nm.wSock.ReadByte();
+            SpawnControl = nm.wSock.ReadByte();
+            ThirdPerson = nm.wSock.ReadByte();
+            JumpHeight = nm.wSock.ReadShort();
         }
 
-        public void Write(NetworkManager NM) {
-            lock (NM.WriteLock) {
-                NM.wSock.WriteByte(Id);
-                NM.wSock.WriteByte(Flying);
-                NM.wSock.WriteByte(NoClip);
-                NM.wSock.WriteByte(Speeding);
-                NM.wSock.WriteByte(SpawnControl);
-                NM.wSock.WriteByte(ThirdPerson);
-                NM.wSock.WriteShort(JumpHeight);
-                NM.wSock.Purge();
+        public void Write(NetworkManager nm) {
+            lock (nm.WriteLock) {
+                nm.wSock.WriteByte(Id);
+                nm.wSock.WriteByte(Flying);
+                nm.wSock.WriteByte(NoClip);
+                nm.wSock.WriteByte(Speeding);
+                nm.wSock.WriteByte(SpawnControl);
+                nm.wSock.WriteByte(ThirdPerson);
+                nm.wSock.WriteShort(JumpHeight);
+                nm.wSock.Purge();
             }
         }
 
-        public void Handle(NetworkManager NM, Main Core) {
+        public void Handle(NetworkManager nm, Bot core) {
+            if (!core.EnableCpe)
+                core.RaiseErrorMessage("Protocol error: Received HackControl while CPE Disabled.");
 
+            if (!core.ClientSupportedExtensions.Contains(CPEExtensions.HackControl))
+                core.RaiseErrorMessage("Protocol error: Received HackControl packet, which client does not support.");
         }
     }
 }

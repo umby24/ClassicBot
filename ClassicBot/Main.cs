@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ClassicBot.Classes;
 using ClassicBot.World;
 
 /*
@@ -18,13 +16,13 @@ using ClassicBot.World;
 
 namespace ClassicBot {
     #region Vectors
-    public struct Vector3s {
+    public struct Vector3S {
         public short X;
         public short Y;
         public short Z;
     }
 
-    public struct Vector3f {
+    public struct Vector3F {
         public float X;
         public float Y;
         public float Z;
@@ -34,28 +32,29 @@ namespace ClassicBot {
     /// <summary>
     /// Main container class that provides basic functions and events having to deal with clients.
     /// </summary>
-    public class Main {
+    public class Bot {
         #region Variables
-		public NetworkManager NM;
+		public NetworkManager Nm;
         #region Server
-        public string Name, MOTD, IP;
+        public string Name, Motd, Ip;
         public int Port;
         public DateTime LastActive;
         public WorldContainer ClientWorld;
-        public List<Entity> Entities;
+        public Dictionary<sbyte, Entity> Entities;
+        public Dictionary<string, ExtPlayerListEntry> ExtPlayerList;
+        public Dictionary<short, ExtPlayerListEntry> NumberPlayerList; 
         #region CPE
-        public bool SupportsCPE = false;
-        public int ServerCBLevel;
+        public bool SupportsCpe = false;
+        public int ServerCbLevel;
         public string ServerAppName;
         public short Extensions, ReceivedExtensions;
         public Dictionary<string, int> ServerExtensions;
         #endregion
         #endregion
-        public string Username, Password, MPPass;
-        public Vector3s Location;
+        public string Username, Password, MpPass = "";
+        public Vector3S Location;
         public byte[] Position;
-		public bool EnableCPE, VerifyNames;
-		public ServiceTypes Service;
+		public bool EnableCpe, VerifyNames;
         #region CPE
         public short ClickDistance = 160;
         public byte HeldBlock;
@@ -86,57 +85,62 @@ namespace ClassicBot {
         /// <summary>
         /// Creates a new MinecraftClient, and initilizes all the required variables.
         /// </summary>
-        /// <param name="LoginService"></param>
-        /// <param name="CPE"></param>
-        /// <param name="UN"></param>
-        /// <param name="PW"></param>
-        /// <param name="VerifyName"></param>
-        public Main (ServiceTypes LoginService, bool CPE, string UN="Bot", string PW="Bot", bool VerifyName=true) {
-			Username = UN;
-			Password = PW;
-			Service = LoginService;
-			EnableCPE = CPE;
-            Location = new Vector3s();
+        /// <param name="cpe"></param>
+        /// <param name="un"></param>
+        /// <param name="pw"></param>
+        /// <param name="verifyName"></param>
+        public Bot (bool cpe, string un="Bot", string pw="Bot", bool verifyName=true) {
+			Username = un;
+			Password = pw;
+			EnableCpe = cpe;
+            Location = new Vector3S();
             Position = new byte[2];
             ClientSupportedExtensions = new List<CPEExtensions>();
-            VerifyNames = VerifyName;
+            ExtPlayerList = new Dictionary<string, ExtPlayerListEntry>(StringComparer.InvariantCultureIgnoreCase);
+            NumberPlayerList = new Dictionary<short, ExtPlayerListEntry>();
+            VerifyNames = verifyName;
 		}
 
         /// <summary>
         /// Connects to a minecraft server. 
         /// </summary>
-        /// <param name="ServerNameOrUrl">Can be the name of the server, the full server play url, or left blank.</param>
-        /// <param name="IsUrl">Set this to true if 'ServerNameorUrl' is a play url.</param>
-        /// <param name="_IP">Ip of the server to connect to. Use this if verify names is off.</param>
-        /// <param name="_Port">Port of the server to connect to. Use this if verify names is off.</param>
-		public void Connect(string ServerNameOrUrl, bool IsUrl, string _IP="", int _Port=0) {
+        /// <param name="serverNameOrUrl">Can be the name of the server, the full server play url, or left blank.</param>
+        /// <param name="isUrl">Set this to true if 'ServerNameorUrl' is a play url.</param>
+        /// <param name="ip">Ip of the server to connect to. Use this if verify names is off.</param>
+        /// <param name="port">Port of the server to connect to. Use this if verify names is off.</param>
+		public void Connect(string serverNameOrUrl, bool isUrl, string ip="", int port=0) {
 			if (VerifyNames) {
-				var LS = new LoginSystem(this);
+                var ls = new ClassicubeInteraction(Username, Password);
 
-				if (!LS.VerifyNames(ServerNameOrUrl, IsUrl)) {
-					RaiseErrorMessage("Failed to verify name.");
-					return;
-				}
+                if (!ls.Login()) {
+                    RaiseErrorMessage("Failed to verify name.");
+                    return;
+                }
+
+			    var myServer = isUrl ? ls.GetServerByUrl(serverNameOrUrl) : ls.GetServerInfo(serverNameOrUrl);
+
+			    Ip = myServer.Ip;
+			    Port = myServer.Port;
+			    MpPass = myServer.Mppass;
 			} else {
-				IP = _IP;
-				Port = _Port;
-                MPPass = "Bot";
+				Ip = ip;
+				Port = port;
 			}
 
-            Entities = new List<Entity>();
+            Entities = new Dictionary<sbyte, Entity>();
             ClientWorld = new WorldContainer();
 
-			NM = new NetworkManager(this);
-			NM.Connect();
+			Nm = new NetworkManager(this);
+			Nm.Connect();
 		}
 
         /// <summary>
         /// Disconnects from the minecraft server (if connected) and resets the client's variables.
         /// </summary>
 		public void Disconnect() {
-			NM.Disconnect();
+			Nm.Disconnect();
 
-            Location = new Vector3s();
+            Location = new Vector3S();
             Position = new byte[2];
 
             Entities.Clear();
@@ -144,59 +148,59 @@ namespace ClassicBot {
 		}
 
         #region Basic Function
-        public void SendChat(string Message) {
-            var myChat = new Classes.Message();
-            myChat.PlayerID = 1;
-            myChat.Text = Message.PadRight(64);
-
-            myChat.Write(NM);
+        public void SendChat(string message) {
+            var myChat = new Classes.Message {PlayerId = 1, Text = message.PadRight(64)};
+            myChat.Write(Nm);
         }
 
         public void RefreshLocation() {
-            var MyLoc = new Classes.PlayerTeleport();
-            MyLoc.PlayerID = -1;
-            MyLoc.X = Location.X;
-            MyLoc.Y = Location.Y;
-            MyLoc.Z = Location.Z;
-            MyLoc.pitch = Position[0];
-            MyLoc.yaw = Position[1];
-            MyLoc.Write(NM);
+            var myLoc = new Classes.PlayerTeleport {
+                PlayerId = -1,
+                X = Location.X,
+                Y = Location.Y,
+                Z = Location.Z,
+                Yaw = Position[0],
+                Pitch = Position[1]
+            };
+
+            myLoc.Write(Nm);
         }
 
-        public void PlaceBlock(int X, int Y, int Z, byte Type) {
-            var BlockPlace = new Classes.SetBlock();
-            BlockPlace.Block = Type;
-            BlockPlace.X = (short)X;
-            BlockPlace.Y = (short)Y;
-            BlockPlace.Z = (short)Z;
-            BlockPlace.Mode = Convert.ToByte((Type > 0));
-            BlockPlace.Write(NM);
+        public void PlaceBlock(int x, int y, int z, byte type) {
+            var blockPlace = new Classes.SetBlock {
+                Block = type,
+                X = (short) x,
+                Y = (short) y,
+                Z = (short) z,
+                Mode = Convert.ToByte((type > 0))
+            };
+            blockPlace.Write(Nm);
         }
         #endregion
         #region Events
-        public void RaiseDebugMessage(string Message) {
+        public void RaiseDebugMessage(string message) {
 			if (DebugMessage != null)
-				DebugMessage(Message);
+				DebugMessage(message);
 		}
-		public void RaiseErrorMessage(string Message) {
+		public void RaiseErrorMessage(string message) {
             if (ErrorMessage != null)
-                ErrorMessage(Message);
+                ErrorMessage(message);
 		}
-		public void RaiseInfoMessage(string Message) {
+		public void RaiseInfoMessage(string message) {
 			if (InfoMessage != null)
-				InfoMessage(Message);
+				InfoMessage(message);
 		}
-		public void RaiseChatMessage(string Message) {
+		public void RaiseChatMessage(string message) {
 			if (ChatMessage != null)
-				ChatMessage(Message);
+				ChatMessage(message);
 		}
-		public void RaisePacketReceived(string Message) {
+		public void RaisePacketReceived(string message) {
 			if (PacketReceived != null)
-				PacketReceived(Message);
+				PacketReceived(message);
 		}
-        public void RaiseDisconnected(string Message) {
+        public void RaiseDisconnected(string message) {
             if (Disconnected != null)
-                Disconnected(Message);
+                Disconnected(message);
         }
         
         #region Non-Message events
@@ -209,54 +213,59 @@ namespace ClassicBot {
                 LevelInitiated();
             }
         }
-        public void RaiseLevelProgress(byte Progress) {
+        public void RaiseLevelProgress(byte progress) {
             if (LevelProgressChanged != null)
-                LevelProgressChanged(Progress);
+                LevelProgressChanged(progress);
         }
-        public void RaiseAuthChange(byte NewAuth) {
+        public void RaiseAuthChange(byte newAuth) {
             if (AuthLevelChanged != null)
-                AuthLevelChanged(NewAuth);
+                AuthLevelChanged(newAuth);
         }
-        public void RaiseLevelComplete(short X, short Y, short Z) {
+        public void RaiseLevelComplete(short x, short y, short z) {
             if (LevelComplete != null)
-                LevelComplete(X, Y, Z);
+                LevelComplete(x, y, z);
         }
-        public void RaiseBlockChange(short X, short Y, short Z) {
+        public void RaiseBlockChange(short x, short y, short z) {
             if (BlockChanged != null)
-                BlockChanged(X, Y, Z);
+                BlockChanged(x, y, z);
         }
-        public void RaisePlayerMoved(Entity Moved) {
+        public void RaisePlayerMoved(Entity moved) {
             if (PlayerMoved != null)
-                PlayerMoved(Moved);
+                PlayerMoved(moved);
         }
-        public void RaisePlayerJoin(Entity NewEntity) {
+        public void RaisePlayerJoin(Entity newEntity) {
             if (PlayerJoined != null)
-                PlayerJoined(NewEntity);
+                PlayerJoined(newEntity);
         }
-        public void RaisePlayerLeft(Entity OldEntity) {
+        public void RaisePlayerLeft(Entity oldEntity) {
             if (PlayerLeft != null)
-                PlayerLeft(OldEntity);
+                PlayerLeft(oldEntity);
         }
         public void RaiseYouMoved() {
             if (YouMoved != null)
                 YouMoved();
         }
-        public void RaiseClickDistanceSet(short Value) {
+        public void RaiseClickDistanceSet(short value) {
             if (ClickDistanceSet != null)
-                ClickDistanceSet(Value);
+                ClickDistanceSet(value);
         }
-        public void RaiseHeldBlockChange(byte Block, byte CanChange) {
+        public void RaiseHeldBlockChange(byte block, byte canChange) {
             if (HeldBlockChanged != null)
-                HeldBlockChanged(Block, CanChange);
+                HeldBlockChanged(block, canChange);
         }
         public void RaiseHotkeyAdded() {
             if (HotkeyAdded != null)
                 HotkeyAdded();
         }
+
+        public void RaiseExtPlayerListUpdate() {
+            if (ExtPlayerListUpdate != null)
+                ExtPlayerListUpdate();
+        }
         #endregion
         #endregion
         #region Event Delegates
-        public delegate void MessageEventArgs(string Message);
+        public delegate void MessageEventArgs(string message);
         /// <summary>
         /// Occurs when an error is thrown by the client.
         /// </summary>
@@ -287,25 +296,26 @@ namespace ClassicBot {
         public event BlankEventArgs LevelInitiated;
         public event BlankEventArgs YouMoved;
         public event BlankEventArgs HotkeyAdded;
+        public event BlankEventArgs ExtPlayerListUpdate;
 
-        public delegate void ProgressEventArgs(byte Progress);
+        public delegate void ProgressEventArgs(byte progress);
         public event ProgressEventArgs LevelProgressChanged;
         public event ProgressEventArgs AuthLevelChanged;
         
-        public delegate void LocationEventArgs(short X, short Y, short Z);
+        public delegate void LocationEventArgs(short x, short y, short z);
         public event LocationEventArgs LevelComplete;
         public event LocationEventArgs BlockChanged;
         
 
-        public delegate void EntityEventArgs(Entity NewEntity);
+        public delegate void EntityEventArgs(Entity newEntity);
         public event EntityEventArgs PlayerJoined;
         public event EntityEventArgs PlayerLeft;
         public event EntityEventArgs PlayerMoved;
 
-        public delegate void CPEShortEventArgs(short Value);
-        public event CPEShortEventArgs ClickDistanceSet;
+        public delegate void CpeShortEventArgs(short value);
+        public event CpeShortEventArgs ClickDistanceSet;
 
-        public delegate void HeldBlockEventArgs(byte HeldBlock, byte PreventChange);
+        public delegate void HeldBlockEventArgs(byte heldBlock, byte preventChange);
         public event HeldBlockEventArgs HeldBlockChanged;
 		#endregion
     }

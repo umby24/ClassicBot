@@ -1,29 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ClassicBot.Classes {
+﻿namespace ClassicBot.Classes {
     public class Assistant {
-        public static string StripColors(string Message) {
-            Message = Message.Replace("&0", "");
-            Message = Message.Replace("&1", "");
-            Message = Message.Replace("&2", "");
-            Message = Message.Replace("&3", "");
-            Message = Message.Replace("&4", "");
-            Message = Message.Replace("&5", "");
-            Message = Message.Replace("&6", "");
-            Message = Message.Replace("&7", "");
-            Message = Message.Replace("&8", "");
-            Message = Message.Replace("&9", "");
-            Message = Message.Replace("&a", "");
-            Message = Message.Replace("&b", "");
-            Message = Message.Replace("&c", "");
-            Message = Message.Replace("&d", "");
-            Message = Message.Replace("&e", "");
-            Message = Message.Replace("&f", "");
+        public static string StripColors(string message) {
+            message = message.Replace("&0", "");
+            message = message.Replace("&1", "");
+            message = message.Replace("&2", "");
+            message = message.Replace("&3", "");
+            message = message.Replace("&4", "");
+            message = message.Replace("&5", "");
+            message = message.Replace("&6", "");
+            message = message.Replace("&7", "");
+            message = message.Replace("&8", "");
+            message = message.Replace("&9", "");
+            message = message.Replace("&a", "");
+            message = message.Replace("&b", "");
+            message = message.Replace("&c", "");
+            message = message.Replace("&d", "");
+            message = message.Replace("&e", "");
+            message = message.Replace("&f", "");
 
-            return Message;
+            return message;
         }
     }
 }

@@ -1,26 +1,21 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ClassicBot.World {
     public class Entity {
         #region Variables
         public string Name;
-        public Vector3s Location;
+        public Vector3S Location;
         public byte Yaw, Pitch;
-        public sbyte PlayerID;
+        public sbyte PlayerId;
         #endregion
 
-        public Entity(string _Name, sbyte ID, short X, short Y, short Z, byte _Yaw, byte _Pitch) {
-            Location = new Vector3s();
-            Location.X = X;
-            Location.Y = Y;
-            Location.Z = Z;
-            Yaw = _Yaw;
-            Pitch = _Pitch;
-            PlayerID = ID;
-            Name = _Name;
+        public Entity(string name, sbyte id, short x, short y, short z, byte yaw, byte pitch) {
+            Location = new Vector3S {X = x, Y = y, Z = z};
+            Yaw = yaw;
+            Pitch = pitch;
+            PlayerId = id;
+            Name = name;
         }
 
         /// <summary>
@@ -38,26 +33,11 @@ namespace ClassicBot.World {
         /// <summary>
         /// Updates where the entity is facing.
         /// </summary>
-        /// <param name="_Yaw"></param>
-        /// <param name="_Pitch"></param>
-        public void UpdateLook(byte _Yaw, byte _Pitch) {
-            Yaw = _Yaw;
-            Pitch = _Pitch;
-        }
-
-        /// <summary>
-        /// Returns an entity that matches the given Entity ID.
-        /// </summary>
-        /// <param name="ID">The Entity ID to search for.</param>
-        /// <param name="EList">The list of entities to search within.</param>
-        /// <returns></returns>
-        public static Entity GetEntitybyID(sbyte ID, List<Entity> EList) {
-            foreach(Entity e in EList) {
-                if (e.PlayerID == ID) 
-                    return e;
-            }
-
-            return null;
+        /// <param name="yaw"></param>
+        /// <param name="pitch"></param>
+        public void UpdateLook(byte yaw, byte pitch) {
+            Yaw = yaw;
+            Pitch = pitch;
         }
     }
 }

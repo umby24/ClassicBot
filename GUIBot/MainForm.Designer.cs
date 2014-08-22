@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.rtbChat = new System.Windows.Forms.RichTextBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -38,19 +38,21 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.devToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetLoggingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbInput = new System.Windows.Forms.TextBox();
             this.treePlayers = new System.Windows.Forms.TreeView();
             this.btnSend = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // richTextBox1
+            // rtbChat
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(0, 27);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(848, 216);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
+            this.rtbChat.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.rtbChat.Location = new System.Drawing.Point(0, 27);
+            this.rtbChat.Name = "rtbChat";
+            this.rtbChat.ReadOnly = true;
+            this.rtbChat.Size = new System.Drawing.Size(848, 216);
+            this.rtbChat.TabIndex = 0;
+            this.rtbChat.Text = "";
             // 
             // menuStrip1
             // 
@@ -78,7 +80,7 @@
             // connectToolStripMenuItem
             // 
             this.connectToolStripMenuItem.Name = "connectToolStripMenuItem";
-            this.connectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.connectToolStripMenuItem.Text = "&Connect";
             this.connectToolStripMenuItem.Click += new System.EventHandler(this.connectToolStripMenuItem_Click);
             // 
@@ -87,23 +89,26 @@
             this.reconnectToolStripMenuItem.Name = "reconnectToolStripMenuItem";
             this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.reconnectToolStripMenuItem.Text = "&Reconnect";
+            this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
             // 
             // disconnectToolStripMenuItem
             // 
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
             this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.disconnectToolStripMenuItem.Text = "&Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(130, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -154,12 +159,12 @@
             this.packetLoggingToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.packetLoggingToolStripMenuItem.Text = "Packet Logging";
             // 
-            // textBox1
+            // tbInput
             // 
-            this.textBox1.Location = new System.Drawing.Point(0, 249);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(848, 20);
-            this.textBox1.TabIndex = 2;
+            this.tbInput.Location = new System.Drawing.Point(0, 249);
+            this.tbInput.Name = "tbInput";
+            this.tbInput.Size = new System.Drawing.Size(848, 20);
+            this.tbInput.TabIndex = 2;
             // 
             // treePlayers
             // 
@@ -176,20 +181,23 @@
             this.btnSend.TabIndex = 4;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // MainForm
             // 
+            this.AcceptButton = this.btnSend;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1003, 273);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.treePlayers);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.tbInput);
+            this.Controls.Add(this.rtbChat);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Classicube Minebot";
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -199,9 +207,9 @@
 
         #endregion
 
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox rtbChat;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbInput;
         private System.Windows.Forms.TreeView treePlayers;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;

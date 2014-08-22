@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ClassicBot {
+﻿namespace ClassicBot {
     
     public enum CPEExtensions {
         ClickDistance,
@@ -34,5 +29,13 @@ namespace ClassicBot {
         public string Action;
         public int Keycode;
         public HotkeyModifier Modifier;
+    }
+
+    public struct ExtPlayerListEntry {
+        public short NameId;
+        public string PlayerName;
+        public string ListName;
+        public string GroupName;
+        public byte GroupRank;
     }
 }

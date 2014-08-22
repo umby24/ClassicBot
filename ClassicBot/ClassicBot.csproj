@@ -49,7 +49,6 @@
     <Compile Include="Main.cs" />
     <Compile Include="NetworkManager.cs" />
     <Compile Include="Classes\Packets.cs" />
-    <Compile Include="LoginSystem.cs" />
     <Compile Include="Classes\Classicube_Interaction.cs" />
     <Compile Include="World\Entity.cs" />
     <Compile Include="World\World.cs" />

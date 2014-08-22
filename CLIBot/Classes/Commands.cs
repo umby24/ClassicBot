@@ -1,101 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
+﻿using System.Threading;
 using System.IO;
 using ClassicBot;
 
 namespace CLIBot.Classes {
-    public struct SayCommand : Command {
+    public struct SayCommand : ICommand {
         public string Command { get { return "say";  } }
         public string Plugin { get { return ""; } }
         public string Group { get { return "General"; } }
         public string Help { get { return "Usage: say [message]. Makes the bot say a message."; } }
         public bool Guests { get { return false; } }
 
-        public void Run(string Command, string[] args, string Text1, string Text2, Main ServerMain, CLIBotClass Bot) {
+        public void Run(string command, string[] args, string text1, string text2, Bot serverBot) {
             if (args.Length > 0) 
-                ServerMain.SendChat(Text1.TrimStart(' '));
+                serverBot.SendChat(text1.TrimStart(' '));
         }
     }
 
-    public struct HeadBobCommand : Command {
+    public struct HeadBobCommand : ICommand {
         public string Command { get { return "headb"; } }
         public string Plugin { get { return ""; } }
         public string Group { get { return "Lulz"; } }
         public string Help { get { return "Usage: Headb [times]. Makes the bot headbang."; } }
         public bool Guests { get { return false; } }
 
-        public void Run(string Command, string[] args, string Text1, string Text2, Main ServerMain, CLIBotClass Bot) {
+        public void Run(string command, string[] args, string text1, string text2, Bot serverBot) {
             if (args.Length > 0) {
-                int Times = int.Parse(args[0]);
+                int times = int.Parse(args[0]);
 
-                for (int i = 0; i < Times; i++) {
-                    ServerMain.Position[0] = 0;
-                    ServerMain.RefreshLocation();
+                for (int i = 0; i < times; i++) {
+                    serverBot.Position[0] = 0;
+                    serverBot.RefreshLocation();
                     Thread.Sleep(100);
-                    ServerMain.Position[0] = 120;
-                    ServerMain.RefreshLocation();
+                    serverBot.Position[0] = 120;
+                    serverBot.RefreshLocation();
                     Thread.Sleep(100);
                 }
             }
         }
     }
 
-    public struct ImportCommand : Command {
+    public struct ImportCommand : ICommand {
         public string Command { get { return "import"; } }
         public string Plugin { get { return ""; } }
         public string Group { get { return "Build"; } }
         public string Help { get { return "Imports a previously exported file. Usage: import [filename]"; } }
         public bool Guests { get { return false; } }
 
-        public void Run(string Command, string[] args, string Text1, string Text2, Main ServerMain, CLIBotClass Bot) {
+        public void Run(string command, string[] args, string text1, string text2, Bot serverBot) {
             if (args.Length > 0) {
                 if (!File.Exists("Imports\\" + args[0] + ".mbot")) {
-                    ServerMain.SendChat("File not found.");
+                    serverBot.SendChat("File not found.");
                     return;
                 }
 
-                Bot.Imp.ImportFile = args[0];
-                Bot.Imp.Importing = true;
-                ServerMain.SendChat("Place an iron-ore marker to import.");
+                Program.Importer.ImportFile = args[0];
+                Program.Importer.Importing = true;
+                serverBot.SendChat("Place an iron-ore marker to import.");
             }
         }
     }
 
-    public struct ImportsCommand : Command {
+    public struct ImportsCommand : ICommand {
         public string Command { get { return "imports"; } }
         public string Plugin { get { return ""; } }
         public string Group { get { return "Build"; } }
         public string Help { get { return "Shows a list of avaliable imports."; } }
         public bool Guests { get { return false; } }
 
-        public void Run(string Command, string[] args, string Text1, string Text2, Main ServerMain, CLIBotClass Bot) {
-            var DirInfo = new DirectoryInfo("Imports\\");
-            ServerMain.SendChat("You have " + DirInfo.GetFiles().Length + " imports.");
-            string ImportString = "";
+        public void Run(string command, string[] args, string text1, string text2, Bot serverBot) {
+            var dirInfo = new DirectoryInfo("Imports\\");
+            serverBot.SendChat("You have " + dirInfo.GetFiles().Length + " imports.");
+            string importString = "";
 
-            foreach (FileInfo b in DirInfo.GetFiles()) 
-                ImportString += b.Name + ", ";
+            foreach (FileInfo b in dirInfo.GetFiles()) 
+                importString += b.Name + ", ";
 
-            ServerMain.SendChat(ImportString.Substring(0, ImportString.Length - 2));
+            serverBot.SendChat(importString.Substring(0, importString.Length - 2));
         }
     }
 
-    public struct CancelImportCommand : Command {
+    public struct CancelImportCommand : ICommand {
         public string Command { get { return "cancel"; } }
         public string Plugin { get { return ""; } }
         public string Group { get { return "Build"; } }
         public string Help { get { return "Cancel an ongoing import."; } }
         public bool Guests { get { return false; } }
 
-        public void Run(string Command, string[] args, string Text1, string Text2, Main ServerMain, CLIBotClass Bot) {
-            if (Bot.Imp.ImportThread != null)
-                Bot.Imp.ImportThread.Abort();
+        public void Run(string command, string[] args, string text1, string text2, Bot serverBot) {
+            if (Program.Importer.ImportThread != null)
+                Program.Importer.ImportThread.Abort();
 
-            ServerMain.SendChat("Canceled import.");
+            serverBot.SendChat("Canceled import.");
         }
     }
 }
