@@ -1,28 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
-using System.Net;
 using System.Net.Sockets;
 
 using ClassicBot.Classes;
-using ClassicWrapped;
 
 namespace ClassicBot {
     public class NetworkManager {
         public Bot ClientBot;
-        public ClassicWrapped.ClassicWrapped wSock;
+        public ClassicWrapped.ClassicWrapped WSock;
         public object WriteLock;
 		public NetworkStream BaseStream;
 		public TcpClient BaseSock;
 
-        Thread Handler, TimeoutHandler;
-        Dictionary<int, Func<IPacket>> Packets;
+        Thread _handler, _timeoutHandler;
+        Dictionary<int, Func<IPacket>> _packets;
 
-        public NetworkManager(Bot Core) {
+        public NetworkManager(Bot core) {
             WriteLock = new object();
-            ClientBot = Core;
+            ClientBot = core;
             Populate();
         }
 
@@ -30,7 +26,7 @@ namespace ClassicBot {
         /// Populates the packet dictionary with all reconized packet types.
         /// </summary>
         void Populate() {
-            Packets = new Dictionary<int, Func<IPacket>> {
+            _packets = new Dictionary<int, Func<IPacket>> {
                 {0, () => new Handshake()},
                 {1, () => new Ping()},
                 {2, () => new LevelInit()},
@@ -72,31 +68,28 @@ namespace ClassicBot {
         /// Sends a client handshake to the minecraft server.
         /// </summary>
 		void DoHandshake() {
-			var hs = new Handshake();
-			hs.ProtocolVersion = 7;
-			hs.Name = ClientBot.Username.PadRight(64);
-			hs.Motd = ClientBot.MpPass.PadRight(64);
+			var hs = new Handshake {
+			    ProtocolVersion = 7,
+			    Name = ClientBot.Username.PadRight(64),
+			    Motd = ClientBot.MpPass.PadRight(64),
+			    Usertype = (byte) (ClientBot.EnableCpe ? 66 : 0)
+			};
 
-			if (ClientBot.EnableCpe)
-				hs.Usertype = 66;
-			else
-				hs.Usertype = 0;
-
-			hs.Write(this);
+            hs.Write(this);
 		}
 
         /// <summary>
         /// Sends CPE ExtInfo and ExtEntry packets to the server.
         /// </summary>
         public void SendCPE() {
-            var myExtInfo = new ExtInfo();
-            myExtInfo.AppName = "ClassicBot";
-            myExtInfo.ExtensionCount = (short)ClientBot.ClientSupportedExtensions.Count;
+            var myExtInfo = new ExtInfo {
+                AppName = "ClassicBot",
+                ExtensionCount = (short) ClientBot.ClientSupportedExtensions.Count
+            };
             myExtInfo.Write(this);
 
-            for (int i = 0; i < ClientBot.ClientSupportedExtensions.Count; i++) {
-                var myExtEntry = new ExtEntry();
-                myExtEntry.ExtName = Enum.GetName(typeof(CPEExtensions), ClientBot.ClientSupportedExtensions[i]);
+            foreach (var t in ClientBot.ClientSupportedExtensions) {
+                var myExtEntry = new ExtEntry {ExtName = Enum.GetName(typeof (CPEExtensions), t)};
                 myExtEntry.Version = CPEVersionGet(myExtEntry.ExtName);
                 myExtEntry.Write(this);
                 ClientBot.RaiseDebugMessage("Sent extension.");
@@ -106,10 +99,10 @@ namespace ClassicBot {
         /// <summary>
         /// Retreives the supported version for a given CPE Extension.
         /// </summary>
-        /// <param name="ExtName"></param>
+        /// <param name="extName"></param>
         /// <returns>Supported Extension Version. 0 indiciates no support.</returns>
-        public int CPEVersionGet(string ExtName) {
-            switch (ExtName) {
+        public int CPEVersionGet(string extName) {
+            switch (extName) {
                 case "ClickDistance":
                     return Bot.ClickDistanceVersion;
                 case "CustomBlocks":
@@ -149,16 +142,16 @@ namespace ClassicBot {
 		public void Connect() {
 			try {
 				BaseSock = new TcpClient();
-				var AR = BaseSock.BeginConnect(ClientBot.Ip, ClientBot.Port, null, null);
+				var ar = BaseSock.BeginConnect(ClientBot.Ip, ClientBot.Port, null, null);
 
-				using (var wh = AR.AsyncWaitHandle) {
-					if (!AR.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
-						BaseSock.Close();
-						ClientBot.RaiseErrorMessage("Failed to connect: Timeout.");
-						return;
-					}
+				using (ar.AsyncWaitHandle) {
+				    if (!ar.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(5), false)) {
+				        BaseSock.Close();
+				        ClientBot.RaiseErrorMessage("Failed to connect: Timeout.");
+				        return;
+				    }
 
-					BaseSock.EndConnect(AR);
+				    BaseSock.EndConnect(ar);
 				}
 			} catch (Exception e) {
 				ClientBot.RaiseErrorMessage("Failed to connect: " + e.Message);
@@ -168,27 +161,26 @@ namespace ClassicBot {
 			ClientBot.RaiseInfoMessage("Connected to server.");
 
 			BaseStream = BaseSock.GetStream();
-			wSock = new ClassicWrapped.ClassicWrapped();
-			wSock._Stream = BaseStream;
+			WSock = new ClassicWrapped.ClassicWrapped {_Stream = BaseStream};
 
-			DoHandshake();
+            DoHandshake();
 
-			Handler = new Thread(Handle);
-			Handler.Start();
+			_handler = new Thread(Handle);
+			_handler.Start();
 
-            TimeoutHandler = new Thread(Timeout);
-            TimeoutHandler.Start();
+            _timeoutHandler = new Thread(Timeout);
+            _timeoutHandler.Start();
 		}
 
         /// <summary>
         /// Disconnects the client and stops packet handlers and timeout watchers.
         /// </summary>
 		public void Disconnect() {
-            if (Handler != null)
-                Handler.Abort();
+            if (_handler != null)
+                _handler.Abort();
 
-            if (TimeoutHandler != null)
-                TimeoutHandler.Abort();
+            if (_timeoutHandler != null)
+                _timeoutHandler.Abort();
 
             BaseStream.Close();
             BaseSock.Close();
@@ -199,20 +191,20 @@ namespace ClassicBot {
         /// </summary>
 		public void Handle() {
 			try {
-				byte PacketID = 255;
+				byte packetId;
 
-				while ((PacketID = wSock.ReadByte()) != 255) {
+				while ((packetId = WSock.ReadByte()) != 255) {
 					if (BaseSock.Connected) {
-						if (!Packets.ContainsKey((int)PacketID)) {
-							ClientBot.RaiseErrorMessage("Received unknown packet! ID: " + PacketID.ToString());
+						if (!_packets.ContainsKey(packetId)) {
+							ClientBot.RaiseErrorMessage("Received unknown packet! ID: " + packetId);
 							Disconnect();
 						}
 
-						var Packet = Packets[PacketID]();
-						Packet.Read(this);
-						Packet.Handle(this, ClientBot);
+						var packet = _packets[packetId]();
+						packet.Read(this);
+						packet.Handle(this, ClientBot);
 
-						ClientBot.RaisePacketReceived("ID: " + PacketID.ToString());
+						ClientBot.RaisePacketReceived("ID: " + packetId);
 					} else {
 						Disconnect();
 						break;

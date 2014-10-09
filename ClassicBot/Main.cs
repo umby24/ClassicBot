@@ -149,12 +149,12 @@ namespace ClassicBot {
 
         #region Basic Function
         public void SendChat(string message) {
-            var myChat = new Classes.Message {PlayerId = 1, Text = message.PadRight(64)};
+            var myChat = new Message {PlayerId = 1, Text = message.PadRight(64)};
             myChat.Write(Nm);
         }
 
         public void RefreshLocation() {
-            var myLoc = new Classes.PlayerTeleport {
+            var myLoc = new PlayerTeleport {
                 PlayerId = -1,
                 X = Location.X,
                 Y = Location.Y,
@@ -167,7 +167,7 @@ namespace ClassicBot {
         }
 
         public void PlaceBlock(int x, int y, int z, byte type) {
-            var blockPlace = new Classes.SetBlock {
+            var blockPlace = new SetBlock {
                 Block = type,
                 X = (short) x,
                 Y = (short) y,

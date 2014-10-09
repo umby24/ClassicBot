@@ -130,7 +130,7 @@ namespace ClassicBot.Classes {
 	        var jsonObj = (JArray)(JToken.Parse(serverString)["servers"]);
 	        var result = new ClassicubeServer[jsonObj.Count];
 
-	        for (int i = 0; i < result.Length; i++) {
+	        for (var i = 0; i < result.Length; i++) {
 	            result[i] = new ClassicubeServer {
                     Hash = jsonObj[i]["hash"].Value<string>(),
                     Ip = jsonObj[i]["ip"].Value<string>(),
@@ -150,7 +150,7 @@ namespace ClassicBot.Classes {
             var jsonObj = JArray.Parse(GetServers());
             var server = new ClassicubeServer();
 
-            foreach (JToken item in jsonObj) {
+            foreach (var item in jsonObj) {
                 if (item["name"].Value<string>().ToLower() != serverName.ToLower()) 
                     continue;
 
@@ -175,7 +175,7 @@ namespace ClassicBot.Classes {
 
             var server = new ClassicubeServer();
 
-            foreach (JToken item in jsonObj) {
+            foreach (var item in jsonObj) {
                 if (item["hash"].Value<string>().ToLower() != url.ToLower()) 
                     continue;
 

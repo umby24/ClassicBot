@@ -21,14 +21,13 @@ namespace ClassicBot.Classes {
                         var buffer = new byte[ChunkSize];
 
                         while (true) {
-                            int bytesRead = zip.Read(buffer, 0, ChunkSize);
+                            var bytesRead = zip.Read(buffer, 0, ChunkSize);
 
                             if (bytesRead == 0) break;
 
                             myMem.Write(buffer, 0, bytesRead);
                         }
 
-                        buffer = null;
                         decompressedData = myMem.ToArray();
                     }
                 }

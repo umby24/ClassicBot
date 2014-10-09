@@ -17,12 +17,9 @@ namespace ClassicBot.World {
         /// <param name="z"></param>
         /// <returns></returns>
         public byte GetBlockId(short x, short y, short z) {
-            int index = (z * MapSize.Y + y) * MapSize.X + x;
+            var index = (z * MapSize.Y + y) * MapSize.X + x;
 
-            if (index > BlockArray.Length - 1)
-                return 0;
-
-            return BlockArray[index];
+            return (byte) (index > BlockArray.Length - 1 ? 0 : BlockArray[index]);
         }
 
         /// <summary>
@@ -33,7 +30,7 @@ namespace ClassicBot.World {
         /// <param name="z"></param>
         /// <param name="type"></param>
         public void UpdateBlock(short x, short y, short z, byte type) {
-            int index = (z * MapSize.Y + y) * MapSize.X + x;
+            var index = (z * MapSize.Y + y) * MapSize.X + x;
 
             if (index > BlockArray.Length - 1)
                 return;
@@ -69,7 +66,6 @@ namespace ClassicBot.World {
             Buffer.BlockCopy(BlockArray, 3, temp, 0, BlockArray.Length - 4);
 
             BlockArray = temp;
-            temp = null;
         }
     }
 }
