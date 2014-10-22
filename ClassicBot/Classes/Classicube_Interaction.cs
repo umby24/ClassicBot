@@ -93,11 +93,7 @@ namespace ClassicBot.Classes {
 
 	        jObj = JToken.Parse(pageData);
 
-	        if (jObj["errorcount"].Value<int>() > 0) {
-	            return false;
-	        }
-
-	        return true;
+	        return jObj["errorcount"].Value<int>() <= 0;
 	    }
 
         public string GetServers() {
@@ -147,7 +143,8 @@ namespace ClassicBot.Classes {
 	    }
 
         public ClassicubeServer GetServerInfo(string serverName) {
-            var jsonObj = JArray.Parse(GetServers());
+            var serverString = GetServers();
+            var jsonObj = (JArray) (JToken.Parse(serverString)["servers"]);
             var server = new ClassicubeServer();
 
             foreach (var item in jsonObj) {
@@ -168,7 +165,8 @@ namespace ClassicBot.Classes {
         }
 
         public ClassicubeServer GetServerByUrl(string url) {
-            var jsonObj = JArray.Parse(GetServers());
+            var serverString = GetServers();
+            var jsonObj = (JArray) (JToken.Parse(serverString)["servers"]);
             var mySplits = url.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
 
             url = mySplits[mySplits.Length - 1];
@@ -176,7 +174,7 @@ namespace ClassicBot.Classes {
             var server = new ClassicubeServer();
 
             foreach (var item in jsonObj) {
-                if (item["hash"].Value<string>().ToLower() != url.ToLower()) 
+                if (!String.Equals(item["hash"].Value<string>(), url, StringComparison.CurrentCultureIgnoreCase)) 
                     continue;
 
                 server.Hash = item["hash"].Value<string>();
