@@ -93,7 +93,7 @@ namespace ClassicBot.Classes {
 
 	        jObj = JToken.Parse(pageData);
 
-	        return jObj["errorcount"].Value<int>() <= 0;
+			return jObj ["authenticated"].Value<bool> ();
 	    }
 
         public string GetServers() {
@@ -136,6 +136,7 @@ namespace ClassicBot.Classes {
                     Mppass = jsonObj[i]["mppass"].Value<string>(),
                     Name = jsonObj[i]["name"].Value<string>(),
                     Software = jsonObj[i]["software"].Value<string>(),
+					Uptime = jsonObj[i]["uptime"].Value<int>()
 	            };
 	        }
 
@@ -158,6 +159,7 @@ namespace ClassicBot.Classes {
                 server.MaxPlayers = item["maxplayers"].Value<int>();
                 server.OnlinePlayers = item["players"].Value<int>();
                 server.Software = item["software"].Value<string>();
+				server.Uptime = item ["uptime"].Value<int> ();
                 break;
             }
 
@@ -184,6 +186,7 @@ namespace ClassicBot.Classes {
                 server.MaxPlayers = item["maxplayers"].Value<int>();
                 server.OnlinePlayers = item["players"].Value<int>();
                 server.Software = item["software"].Value<string>();
+				server.Uptime = item ["uptime"].Value<int> ();
                 break;
             }
 

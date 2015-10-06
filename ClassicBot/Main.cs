@@ -45,6 +45,7 @@ namespace ClassicBot {
         public Dictionary<short, ExtPlayerListEntry> NumberPlayerList; 
         #region CPE
         public bool SupportsCpe = false;
+		public bool SentCpe = false;
         public int ServerCbLevel;
         public string ServerAppName;
         public short Extensions, ReceivedExtensions;

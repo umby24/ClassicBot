@@ -213,7 +213,7 @@ namespace ClassicBot {
 			} catch (Exception e) {
 				if (e.GetType() != typeof(ThreadAbortException)) {
 					ClientBot.RaiseErrorMessage("Critical error in handling packets.\n" + e.Message);
-					//ClientBot.RaiseErrorMessage(e.Message);
+					ClientBot.RaiseErrorMessage(e.StackTrace);
 				}
 			}
 		}

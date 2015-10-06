@@ -142,7 +142,7 @@ namespace GUIBot {
             int start = text.IndexOf('&');
 
             if (start == -1) {
-                Log(Text);
+				LogColor(text, Color.White, false);
                 return;
             }
 
