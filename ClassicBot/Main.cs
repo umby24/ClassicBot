@@ -58,7 +58,7 @@ namespace ClassicBot {
         #region CPE
         public short ClickDistance = 160;
         public byte HeldBlock;
-        public bool CanChangeBlock;
+        public bool CanChangeBlock, SentCPE;
         public string AppName = "ClassicBot";
         public List<CPEExtensions> ClientSupportedExtensions;
         public List<TextHotKeyEntry> Hotkeys;
@@ -178,15 +178,15 @@ namespace ClassicBot {
         }
         #endregion
         #region Events
-        public void RaiseDebugMessage(string message) {
-			if (DebugMessage != null)
-				DebugMessage(message);
-		}
-		public void RaiseErrorMessage(string message) {
-            if (ErrorMessage != null)
-                ErrorMessage(message);
-		}
-		public void RaiseInfoMessage(string message) {
+        public void raiseDebugMessage(string message) {
+            DebugMessage?.Invoke(message);
+        }
+
+        public void RaiseErrorMessage(string message) {
+            ErrorMessage?.Invoke(message);
+        }
+
+        public void RaiseInfoMessage(string message) {
 			if (InfoMessage != null)
 				InfoMessage(message);
 		}

@@ -61,7 +61,7 @@ namespace ClassicBot {
 				{32, () => new HackControl()}
             };
 
-			ClientBot.RaiseDebugMessage("Packets populated.");
+			ClientBot.raiseDebugMessage("Packets populated.");
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace ClassicBot {
                 var myExtEntry = new ExtEntry {ExtName = Enum.GetName(typeof (CPEExtensions), t)};
                 myExtEntry.Version = CPEVersionGet(myExtEntry.ExtName);
                 myExtEntry.Write(this);
-                ClientBot.RaiseDebugMessage("Sent extension.");
+                ClientBot.raiseDebugMessage("Sent extension.");
             }
         }
 

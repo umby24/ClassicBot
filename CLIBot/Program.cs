@@ -34,7 +34,7 @@ namespace CLIBot {
                     return;
                 }
 
-                if (args.Length < 5) {
+                if (args.Length < 3) {
                     Console.WriteLine("Invalid number of arguments. See CLIbot.exe -h");
                     return;
                 }
@@ -49,27 +49,27 @@ namespace CLIBot {
                 if (testing)
                     myServer.VerifyNames = true;
 
-                myServer.Username = args[2];
-                myServer.Password = args[3];
-                _ipNameorUrl = args[4];
+                myServer.Username = args[1];
+                myServer.Password = args[2];
+                _ipNameorUrl = args[3];
 
-                if (args.Length >= 6) {
+                if (args.Length >= 5) {
                     testing = false;
                     int myInt;
                     bool myBool;
-                        
-                    if (int.TryParse(args[5], out myInt)) {
+
+                    if (int.TryParse(args[4], out myInt)) {
                         _port = myInt;
                         testing = true;
 
-                        if (args.Length > 6) {
-                            if (bool.TryParse(args[6], out myBool)) {
+                        if (args.Length > 5) {
+                            if (bool.TryParse(args[5], out myBool)) {
                                 _logPackets = myBool;
                             }
                         }
                     }
 
-                    if (bool.TryParse(args[5], out myBool)) {
+                    if (bool.TryParse(args[4], out myBool)) {
                         _logPackets = myBool;
                         testing = true;
                     }
@@ -84,7 +84,7 @@ namespace CLIBot {
             if (_logPackets) {
                 myServer.PacketReceived += packet => _logger.Log(packet);
             }
-            
+
             myServer.ChatMessage += message => {
                 ColoredConsole.ColorConvertingConsole.WriteLine("[Chat] " + message);
 
@@ -96,10 +96,14 @@ namespace CLIBot {
 
             myServer.ErrorMessage += message => ColoredConsole.ColorConvertingConsole.WriteLine("&4[Error] &f" + message);
 
+            myServer.DebugMessage += message => ColoredConsole.ColorConvertingConsole.WriteLine("&9[Debug] &f" + message);
+
             myServer.BlockChanged += (x, y, z) => {
-                if (Importer.Importing && myServer.ClientWorld.GetBlockId(x, y, z) == 15) 
+                if (Importer.Importing && myServer.ClientWorld.GetBlockId(x, y, z) == 15)
                     Importer.ImportMBot(myServer, x, y, z);
             };
+
+
 
             if (_ipNameorUrl.Contains("http")) {
                 myServer.Connect(_ipNameorUrl, true, "127.0.0.1", 25565);

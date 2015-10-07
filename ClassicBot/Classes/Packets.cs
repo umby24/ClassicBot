@@ -20,20 +20,20 @@ namespace ClassicBot.Classes {
         public byte Usertype { get; set; }
 
         public void Read(NetworkManager nm) {
-            ProtocolVersion = nm.wSock.ReadByte();
-            Name = nm.wSock.ReadString();
-            Motd = nm.wSock.ReadString();
-            Usertype = nm.wSock.ReadByte();
+            ProtocolVersion = nm.WSock.ReadByte();
+            Name = nm.WSock.ReadString();
+            Motd = nm.WSock.ReadString();
+            Usertype = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(ProtocolVersion);
-                nm.wSock.WriteString(Name);
-                nm.wSock.WriteString(Motd);
-                nm.wSock.WriteByte(Usertype);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(ProtocolVersion);
+                nm.WSock.WriteString(Name);
+                nm.WSock.WriteString(Motd);
+                nm.WSock.WriteByte(Usertype);
+                nm.WSock.Purge();
             }
         }
 
@@ -56,8 +56,8 @@ namespace ClassicBot.Classes {
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.Purge();
             }
         }
 
@@ -77,8 +77,8 @@ namespace ClassicBot.Classes {
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.Purge();
             }
         }
 
@@ -96,17 +96,17 @@ namespace ClassicBot.Classes {
         public byte Percent { get; set; }
 
         public void Read(NetworkManager nm) {
-            Length = nm.wSock.ReadShort();
-            Data = nm.wSock.ReadByteArray();
-            Percent = nm.wSock.ReadByte();
+            Length = nm.WSock.ReadShort();
+            Data = nm.WSock.ReadByteArray();
+            Percent = nm.WSock.ReadByte();
         }
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(Length);
-                nm.wSock.WriteByteArray(Data);
-                nm.wSock.WriteByte(Percent);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(Length);
+                nm.WSock.WriteByteArray(Data);
+                nm.WSock.WriteByte(Percent);
+                nm.WSock.Purge();
             }
         }
         public void Handle(NetworkManager nm, Bot core) {
@@ -116,7 +116,7 @@ namespace ClassicBot.Classes {
 			Buffer.BlockCopy(temp, 0, core.ClientWorld.BlockArray, 0, temp.Length);
             Buffer.BlockCopy(Data, 0, core.ClientWorld.BlockArray, temp.Length, Length);
 
-			core.RaiseDebugMessage("Map chunk size: " + Length + " Percent: " + Percent);
+			core.raiseDebugMessage("Map chunk size: " + Length + " Percent: " + Percent);
             core.RaiseLevelProgress(Percent);
         }
     }
@@ -129,25 +129,23 @@ namespace ClassicBot.Classes {
         public short SizeZ { get; set; }
 
         public void Read(NetworkManager nm) {
-            SizeX = nm.wSock.ReadShort();
-            SizeZ = nm.wSock.ReadShort();
-            SizeY = nm.wSock.ReadShort();
+            SizeX = nm.WSock.ReadShort();
+            SizeZ = nm.WSock.ReadShort();
+            SizeY = nm.WSock.ReadShort();
         }
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(SizeX);
-                nm.wSock.WriteShort(SizeZ);
-                nm.wSock.WriteShort(SizeY);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(SizeX);
+                nm.WSock.WriteShort(SizeZ);
+                nm.WSock.WriteShort(SizeY);
+                nm.WSock.Purge();
             }
         }
         public void Handle(NetworkManager nm, Bot core) {
-            core.ClientWorld.BlockArray = GZip.UnGZip(core.ClientWorld.BlockArray);
+            core.ClientWorld.BlockArray = GZip.UnGZip(core.ClientWorld.BlockArray) ??
+                                          new byte[(SizeX * SizeY * SizeZ) + 4];
 
-            if (core.ClientWorld.BlockArray == null) {
-                core.ClientWorld.BlockArray = new byte[(SizeX * SizeY * SizeZ) + 4];
-            }
             var blockArraySize = BitConverter.ToInt32(new[] { core.ClientWorld.BlockArray[3], core.ClientWorld.BlockArray[2], core.ClientWorld.BlockArray[1], core.ClientWorld.BlockArray[0] }, 0);
             core.ClientWorld.RemoveSize();
 
@@ -173,22 +171,22 @@ namespace ClassicBot.Classes {
         public byte Block { get; set; }
 
         public void Read(NetworkManager nm) {
-            X = nm.wSock.ReadShort();
-            Z = nm.wSock.ReadShort();
-            Y = nm.wSock.ReadShort();
-            Mode = nm.wSock.ReadByte();
-            Block = nm.wSock.ReadByte();
+            X = nm.WSock.ReadShort();
+            Z = nm.WSock.ReadShort();
+            Y = nm.WSock.ReadShort();
+            Mode = nm.WSock.ReadByte();
+            Block = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(X);
-                nm.wSock.WriteShort(Z);
-                nm.wSock.WriteShort(Y);
-                nm.wSock.WriteByte(Mode);
-                nm.wSock.WriteByte(Block);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(X);
+                nm.WSock.WriteShort(Z);
+                nm.WSock.WriteShort(Y);
+                nm.WSock.WriteByte(Mode);
+                nm.WSock.WriteByte(Block);
+                nm.WSock.Purge();
             }
         }
 
@@ -205,19 +203,19 @@ namespace ClassicBot.Classes {
         public byte Block { get; set; }
 
         public void Read(NetworkManager nm) {
-            X = nm.wSock.ReadShort();
-            Z = nm.wSock.ReadShort();
-            Y = nm.wSock.ReadShort();
-            Block = nm.wSock.ReadByte();
+            X = nm.WSock.ReadShort();
+            Z = nm.WSock.ReadShort();
+            Y = nm.WSock.ReadShort();
+            Block = nm.WSock.ReadByte();
         }
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(X);
-                nm.wSock.WriteShort(Z);
-                nm.wSock.WriteShort(Y);
-                nm.wSock.WriteByte(Block);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(X);
+                nm.WSock.WriteShort(Z);
+                nm.WSock.WriteShort(Y);
+                nm.WSock.WriteByte(Block);
+                nm.WSock.Purge();
             }
         }
         public void Handle(NetworkManager nm, Bot core) {
@@ -237,26 +235,26 @@ namespace ClassicBot.Classes {
         public byte Pitch { get; set; }
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
-            PlayerName = nm.wSock.ReadString();
-            X = nm.wSock.ReadShort();
-            Z = nm.wSock.ReadShort();
-            Y = nm.wSock.ReadShort();
-            Yaw = nm.wSock.ReadByte();
-            Pitch = nm.wSock.ReadByte();
+            PlayerId = nm.WSock.ReadSByte();
+            PlayerName = nm.WSock.ReadString();
+            X = nm.WSock.ReadShort();
+            Z = nm.WSock.ReadShort();
+            Y = nm.WSock.ReadShort();
+            Yaw = nm.WSock.ReadByte();
+            Pitch = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteSByte(PlayerId);
-                nm.wSock.WriteString(PlayerName);
-                nm.wSock.WriteShort(X);
-                nm.wSock.WriteShort(Z);
-                nm.wSock.WriteShort(Y);
-                nm.wSock.WriteByte(Yaw);
-                nm.wSock.WriteByte(Pitch);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteSByte(PlayerId);
+                nm.WSock.WriteString(PlayerName);
+                nm.WSock.WriteShort(X);
+                nm.WSock.WriteShort(Z);
+                nm.WSock.WriteShort(Y);
+                nm.WSock.WriteByte(Yaw);
+                nm.WSock.WriteByte(Pitch);
+                nm.WSock.Purge();
             }
         }
 
@@ -272,7 +270,7 @@ namespace ClassicBot.Classes {
                 core.Location.Z = Z;
                 core.Position[0] = Yaw;
                 core.Position[1] = Pitch;
-                core.RaiseDebugMessage("Set Location Via SpawnPlayer");
+                core.raiseDebugMessage("Set Location Via SpawnPlayer");
                 core.RaiseYouMoved();
             }
         }
@@ -288,24 +286,24 @@ namespace ClassicBot.Classes {
         public byte Pitch { get; set; }
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
-            X = nm.wSock.ReadShort();
-            Z = nm.wSock.ReadShort();
-            Y = nm.wSock.ReadShort();
-            Yaw = nm.wSock.ReadByte();
-            Pitch = nm.wSock.ReadByte();
+            PlayerId = nm.WSock.ReadSByte();
+            X = nm.WSock.ReadShort();
+            Z = nm.WSock.ReadShort();
+            Y = nm.WSock.ReadShort();
+            Yaw = nm.WSock.ReadByte();
+            Pitch = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteSByte(PlayerId);
-                nm.wSock.WriteShort(X);
-                nm.wSock.WriteShort(Z);
-                nm.wSock.WriteShort(Y);
-                nm.wSock.WriteByte(Yaw);
-                nm.wSock.WriteByte(Pitch);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteSByte(PlayerId);
+                nm.WSock.WriteShort(X);
+                nm.WSock.WriteShort(Z);
+                nm.WSock.WriteShort(Y);
+                nm.WSock.WriteByte(Yaw);
+                nm.WSock.WriteByte(Pitch);
+                nm.WSock.Purge();
             }
         }
 
@@ -328,7 +326,7 @@ namespace ClassicBot.Classes {
             core.Position[0] = Yaw;
             core.Position[1] = Pitch;
             core.RaiseYouMoved();
-            core.RaiseDebugMessage("Set location via Teleport.");
+            core.raiseDebugMessage("Set location via Teleport.");
         }
     }
 
@@ -342,24 +340,24 @@ namespace ClassicBot.Classes {
         public byte Pitch { get; set; }
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
-            ChangeX = nm.wSock.ReadShort();
-            ChangeZ = nm.wSock.ReadShort();
-            ChangeY = nm.wSock.ReadShort();
-            Yaw = nm.wSock.ReadByte();
-            Pitch = nm.wSock.ReadByte();
+            PlayerId = nm.WSock.ReadSByte();
+            ChangeX = nm.WSock.ReadShort();
+            ChangeZ = nm.WSock.ReadShort();
+            ChangeY = nm.WSock.ReadShort();
+            Yaw = nm.WSock.ReadByte();
+            Pitch = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteSByte(PlayerId);
-                nm.wSock.WriteShort(ChangeX);
-                nm.wSock.WriteShort(ChangeZ);
-                nm.wSock.WriteShort(ChangeY);
-                nm.wSock.WriteByte(Yaw);
-                nm.wSock.WriteByte(Pitch);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteSByte(PlayerId);
+                nm.WSock.WriteShort(ChangeX);
+                nm.WSock.WriteShort(ChangeZ);
+                nm.WSock.WriteShort(ChangeY);
+                nm.WSock.WriteByte(Yaw);
+                nm.WSock.WriteByte(Pitch);
+                nm.WSock.Purge();
             }
         }
 
@@ -394,10 +392,10 @@ namespace ClassicBot.Classes {
         public short ChangeZ { get; set; }
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
-            ChangeX = nm.wSock.ReadShort();
-            ChangeZ = nm.wSock.ReadShort();
-            ChangeY = nm.wSock.ReadShort();
+            PlayerId = nm.WSock.ReadSByte();
+            ChangeX = nm.WSock.ReadShort();
+            ChangeZ = nm.WSock.ReadShort();
+            ChangeY = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
@@ -431,9 +429,9 @@ namespace ClassicBot.Classes {
         public byte Pitch { get; set; }
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
-            Yaw = nm.wSock.ReadByte();
-            Pitch = nm.wSock.ReadByte();
+            PlayerId = nm.WSock.ReadSByte();
+            Yaw = nm.WSock.ReadByte();
+            Pitch = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
@@ -466,13 +464,13 @@ namespace ClassicBot.Classes {
         public sbyte PlayerId;
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
+            PlayerId = nm.WSock.ReadSByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteSByte(PlayerId);
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteSByte(PlayerId);
             }
         }
 
@@ -496,16 +494,16 @@ namespace ClassicBot.Classes {
         public string Text { get; set; }
 
         public void Read(NetworkManager nm) {
-            PlayerId = nm.wSock.ReadSByte();
-            Text = nm.wSock.ReadString();
+            PlayerId = nm.WSock.ReadSByte();
+            Text = nm.WSock.ReadString();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteSByte(PlayerId);
-                nm.wSock.WriteString(Text);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteSByte(PlayerId);
+                nm.WSock.WriteString(Text);
+                nm.WSock.Purge();
             }
         }
 
@@ -519,14 +517,14 @@ namespace ClassicBot.Classes {
         public string Reason { get; set; }
 
         public void Read(NetworkManager nm) {
-            Reason = nm.wSock.ReadString();
+            Reason = nm.WSock.ReadString();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteString(Reason);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteString(Reason);
+                nm.WSock.Purge();
             }
         }
 
@@ -540,14 +538,14 @@ namespace ClassicBot.Classes {
         public byte Rank { get; set; }
 
         public void Read(NetworkManager nm) {
-            Rank = nm.wSock.ReadByte();
+            Rank = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(Rank);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(Rank);
+                nm.WSock.Purge();
             }
         }
 
@@ -562,16 +560,16 @@ namespace ClassicBot.Classes {
         public short ExtensionCount { get; set; }
 
         public void Read(NetworkManager nm) {
-            AppName = nm.wSock.ReadString();
-            ExtensionCount = nm.wSock.ReadShort();
+            AppName = nm.WSock.ReadString();
+            ExtensionCount = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteString(AppName);
-                nm.wSock.WriteShort(ExtensionCount);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteString(AppName);
+                nm.WSock.WriteShort(ExtensionCount);
+                nm.WSock.Purge();
             }
         }
 
@@ -583,7 +581,7 @@ namespace ClassicBot.Classes {
             core.ServerAppName = AppName;
             core.Extensions = ExtensionCount;
             core.ServerExtensions = new Dictionary<string, int>();
-            core.RaiseDebugMessage("Connecting to " + AppName + " with " + ExtensionCount + " extensions.");
+            core.raiseDebugMessage("Connecting to " + AppName + " with " + ExtensionCount + " extensions.");
         }
     }
 
@@ -593,16 +591,16 @@ namespace ClassicBot.Classes {
         public int Version { get; set; }
 
         public void Read(NetworkManager nm) {
-            ExtName = nm.wSock.ReadString();
-            Version = nm.wSock.ReadInt();
+            ExtName = nm.WSock.ReadString();
+            Version = nm.WSock.ReadInt();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteString(ExtName);
-                nm.wSock.WriteInt(Version);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteString(ExtName);
+                nm.WSock.WriteInt(Version);
+                nm.WSock.Purge();
             }
         }
 
@@ -623,7 +621,7 @@ namespace ClassicBot.Classes {
             else 
                 core.RaiseErrorMessage("Protocol warning: Server sent ExtEntry of same name multiple times (" + ExtName + ")");
             
-            core.RaiseDebugMessage("Received ExtEntry: " + ExtName + " -- " + Version);
+            core.raiseDebugMessage("Received ExtEntry: " + ExtName + " -- " + Version);
 
             if (core.ReceivedExtensions == core.Extensions) 
                 nm.SendCPE();
@@ -635,14 +633,14 @@ namespace ClassicBot.Classes {
         public short Distance { get; set; }
 
         public void Read(NetworkManager nm) {
-            Distance = nm.wSock.ReadShort();
+            Distance = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(Distance);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(Distance);
+                nm.WSock.Purge();
             }
         }
 
@@ -663,14 +661,14 @@ namespace ClassicBot.Classes {
         public byte SupportLevel { get; set; }
 
         public void Read(NetworkManager nm) {
-            SupportLevel = nm.wSock.ReadByte();
+            SupportLevel = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(SupportLevel);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(SupportLevel);
+                nm.WSock.Purge();
             }
         }
 
@@ -686,7 +684,7 @@ namespace ClassicBot.Classes {
             var myCb = new CustomBlockSupportLevel {SupportLevel = Bot.CustomBlockSuportlevel};
             myCb.Write(nm);
 
-            core.RaiseDebugMessage("Received CustomBlockSupportLevel.");
+            core.raiseDebugMessage("Received CustomBlockSupportLevel.");
         }
     }
 
@@ -696,16 +694,16 @@ namespace ClassicBot.Classes {
         public byte PreventChange { get; set; }
 
         public void Read(NetworkManager nm) {
-            BlockToHold = nm.wSock.ReadByte();
-            PreventChange = nm.wSock.ReadByte();
+            BlockToHold = nm.WSock.ReadByte();
+            PreventChange = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(BlockToHold);
-                nm.wSock.WriteByte(PreventChange);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(BlockToHold);
+                nm.WSock.WriteByte(PreventChange);
+                nm.WSock.Purge();
             }
         }
 
@@ -730,20 +728,20 @@ namespace ClassicBot.Classes {
         public byte KeyMods { get; set; }
 
         public void Read(NetworkManager nm) {
-            Label = nm.wSock.ReadString();
-            Action = nm.wSock.ReadString();
-            KeyCode = nm.wSock.ReadInt();
-            KeyMods = nm.wSock.ReadByte();
+            Label = nm.WSock.ReadString();
+            Action = nm.WSock.ReadString();
+            KeyCode = nm.WSock.ReadInt();
+            KeyMods = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteString(Label);
-                nm.wSock.WriteString(Action);
-                nm.wSock.WriteInt(KeyCode);
-                nm.wSock.WriteByte(KeyMods);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteString(Label);
+                nm.WSock.WriteString(Action);
+                nm.WSock.WriteInt(KeyCode);
+                nm.WSock.WriteByte(KeyMods);
+                nm.WSock.Purge();
             }
         }
 
@@ -778,22 +776,22 @@ namespace ClassicBot.Classes {
         public byte GroupRank { get; set; }
 
         public void Read(NetworkManager nm) {
-            NameId = nm.wSock.ReadShort();
-            PlayerName = nm.wSock.ReadString();
-            ListName = nm.wSock.ReadString();
-            GroupName = nm.wSock.ReadString();
-            GroupRank = nm.wSock.ReadByte();
+            NameId = nm.WSock.ReadShort();
+            PlayerName = nm.WSock.ReadString();
+            ListName = nm.WSock.ReadString();
+            GroupName = nm.WSock.ReadString();
+            GroupRank = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(NameId);
-                nm.wSock.WriteString(PlayerName);
-                nm.wSock.WriteString(ListName);
-                nm.wSock.WriteString(GroupName);
-                nm.wSock.WriteByte(GroupRank);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(NameId);
+                nm.WSock.WriteString(PlayerName);
+                nm.WSock.WriteString(ListName);
+                nm.WSock.WriteString(GroupName);
+                nm.WSock.WriteByte(GroupRank);
+                nm.WSock.Purge();
             }
         }
 
@@ -833,17 +831,17 @@ namespace ClassicBot.Classes {
         public string SkinName { get; set; }
 
         public void Read(NetworkManager nm) {
-            EntityId = nm.wSock.ReadByte();
-            InGameName = nm.wSock.ReadString();
-            SkinName = nm.wSock.ReadString();
+            EntityId = nm.WSock.ReadByte();
+            InGameName = nm.WSock.ReadString();
+            SkinName = nm.WSock.ReadString();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(EntityId);
-                nm.wSock.WriteString(InGameName);
-                nm.wSock.WriteString(SkinName);
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(EntityId);
+                nm.WSock.WriteString(InGameName);
+                nm.WSock.WriteString(SkinName);
             }
         }
 
@@ -860,14 +858,14 @@ namespace ClassicBot.Classes {
         public short NameId { get; set; }
 
         public void Read(NetworkManager nm) {
-            NameId = nm.wSock.ReadShort();
+            NameId = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteShort(NameId);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteShort(NameId);
+                nm.WSock.Purge();
             }
         }
 
@@ -897,20 +895,20 @@ namespace ClassicBot.Classes {
         public short Blue { get; set; }
 
         public void Read(NetworkManager nm) {
-            ColorType = nm.wSock.ReadByte();
-            Red = nm.wSock.ReadShort();
-            Green = nm.wSock.ReadShort();
-            Blue = nm.wSock.ReadShort();
+            ColorType = nm.WSock.ReadByte();
+            Red = nm.WSock.ReadShort();
+            Green = nm.WSock.ReadShort();
+            Blue = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(ColorType);
-                nm.wSock.WriteShort(Red);
-                nm.wSock.WriteShort(Green);
-                nm.wSock.WriteShort(Blue);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(ColorType);
+                nm.WSock.WriteShort(Red);
+                nm.WSock.WriteShort(Green);
+                nm.WSock.WriteShort(Blue);
+                nm.WSock.Purge();
             }
         }
 
@@ -939,36 +937,36 @@ namespace ClassicBot.Classes {
         public short Opacity { get; set; }
 
         public void Read(NetworkManager nm) {
-            SelectionId = nm.wSock.ReadByte();
-            Label = nm.wSock.ReadString();
-            StartX = nm.wSock.ReadShort();
-            StartZ = nm.wSock.ReadShort();
-            StartY = nm.wSock.ReadShort();
-            EndX = nm.wSock.ReadShort();
-            EndZ = nm.wSock.ReadShort();
-            EndY = nm.wSock.ReadShort();
-            Red = nm.wSock.ReadShort();
-            Green = nm.wSock.ReadShort();
-            Blue = nm.wSock.ReadShort();
-            Opacity = nm.wSock.ReadShort();
+            SelectionId = nm.WSock.ReadByte();
+            Label = nm.WSock.ReadString();
+            StartX = nm.WSock.ReadShort();
+            StartZ = nm.WSock.ReadShort();
+            StartY = nm.WSock.ReadShort();
+            EndX = nm.WSock.ReadShort();
+            EndZ = nm.WSock.ReadShort();
+            EndY = nm.WSock.ReadShort();
+            Red = nm.WSock.ReadShort();
+            Green = nm.WSock.ReadShort();
+            Blue = nm.WSock.ReadShort();
+            Opacity = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(SelectionId);
-                nm.wSock.WriteString(Label);
-                nm.wSock.WriteShort(StartX);
-                nm.wSock.WriteShort(StartZ);
-                nm.wSock.WriteShort(StartY);
-                nm.wSock.WriteShort(EndX);
-                nm.wSock.WriteShort(EndZ);
-                nm.wSock.WriteShort(EndY);
-                nm.wSock.WriteShort(Red);
-                nm.wSock.WriteShort(Green);
-                nm.wSock.WriteShort(Blue);
-                nm.wSock.WriteShort(Opacity);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(SelectionId);
+                nm.WSock.WriteString(Label);
+                nm.WSock.WriteShort(StartX);
+                nm.WSock.WriteShort(StartZ);
+                nm.WSock.WriteShort(StartY);
+                nm.WSock.WriteShort(EndX);
+                nm.WSock.WriteShort(EndZ);
+                nm.WSock.WriteShort(EndY);
+                nm.WSock.WriteShort(Red);
+                nm.WSock.WriteShort(Green);
+                nm.WSock.WriteShort(Blue);
+                nm.WSock.WriteShort(Opacity);
+                nm.WSock.Purge();
             }
         }
 
@@ -986,14 +984,14 @@ namespace ClassicBot.Classes {
         public byte SelectionId { get; set; }
 
         public void Read(NetworkManager nm) {
-            SelectionId = nm.wSock.ReadByte();
+            SelectionId = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(SelectionId);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(SelectionId);
+                nm.WSock.Purge();
             }
         }
 
@@ -1013,18 +1011,18 @@ namespace ClassicBot.Classes {
         public byte AllowDeletion { get; set; }
 
         public void Read(NetworkManager nm) {
-            BlockType = nm.wSock.ReadByte();
-            AllowPlacement = nm.wSock.ReadByte();
-            AllowDeletion = nm.wSock.ReadByte();
+            BlockType = nm.WSock.ReadByte();
+            AllowPlacement = nm.WSock.ReadByte();
+            AllowDeletion = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(BlockType);
-                nm.wSock.WriteByte(AllowPlacement);
-                nm.wSock.WriteByte(AllowDeletion);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(BlockType);
+                nm.WSock.WriteByte(AllowPlacement);
+                nm.WSock.WriteByte(AllowDeletion);
+                nm.WSock.Purge();
             }
         }
 
@@ -1046,16 +1044,16 @@ namespace ClassicBot.Classes {
         public string ModelName { get; set; }
 
         public void Read(NetworkManager nm) {
-            EntityId = nm.wSock.ReadByte();
-            ModelName = nm.wSock.ReadString();
+            EntityId = nm.WSock.ReadByte();
+            ModelName = nm.WSock.ReadString();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(EntityId);
-                nm.wSock.WriteString(ModelName);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(EntityId);
+                nm.WSock.WriteString(ModelName);
+                nm.WSock.Purge();
             }
         }
 
@@ -1075,20 +1073,20 @@ namespace ClassicBot.Classes {
         public short SideLevel { get; set; }
 
         public void Read(NetworkManager nm) {
-            TextureUrl = nm.wSock.ReadString();
-            SideBlock = nm.wSock.ReadByte();
-            EdgeBlock = nm.wSock.ReadByte();
-            SideLevel = nm.wSock.ReadShort();
+            TextureUrl = nm.WSock.ReadString();
+            SideBlock = nm.WSock.ReadByte();
+            EdgeBlock = nm.WSock.ReadByte();
+            SideLevel = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteString(TextureUrl);
-                nm.wSock.WriteByte(SideBlock);
-                nm.wSock.WriteByte(EdgeBlock);
-                nm.wSock.WriteShort(SideLevel);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteString(TextureUrl);
+                nm.WSock.WriteByte(SideBlock);
+                nm.WSock.WriteByte(EdgeBlock);
+                nm.WSock.WriteShort(SideLevel);
+                nm.WSock.Purge();
             }
         }
 
@@ -1105,14 +1103,14 @@ namespace ClassicBot.Classes {
         public byte WeatherType { get; set; }
 
         public void Read(NetworkManager nm) {
-            WeatherType = nm.wSock.ReadByte();
+            WeatherType = nm.WSock.ReadByte();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(WeatherType);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(WeatherType);
+                nm.WSock.Purge();
             }
         }
 
@@ -1134,24 +1132,24 @@ namespace ClassicBot.Classes {
         public short JumpHeight { get; set; }
 
         public void Read(NetworkManager nm) {
-            Flying = nm.wSock.ReadByte();
-            NoClip = nm.wSock.ReadByte();
-            Speeding = nm.wSock.ReadByte();
-            SpawnControl = nm.wSock.ReadByte();
-            ThirdPerson = nm.wSock.ReadByte();
-            JumpHeight = nm.wSock.ReadShort();
+            Flying = nm.WSock.ReadByte();
+            NoClip = nm.WSock.ReadByte();
+            Speeding = nm.WSock.ReadByte();
+            SpawnControl = nm.WSock.ReadByte();
+            ThirdPerson = nm.WSock.ReadByte();
+            JumpHeight = nm.WSock.ReadShort();
         }
 
         public void Write(NetworkManager nm) {
             lock (nm.WriteLock) {
-                nm.wSock.WriteByte(Id);
-                nm.wSock.WriteByte(Flying);
-                nm.wSock.WriteByte(NoClip);
-                nm.wSock.WriteByte(Speeding);
-                nm.wSock.WriteByte(SpawnControl);
-                nm.wSock.WriteByte(ThirdPerson);
-                nm.wSock.WriteShort(JumpHeight);
-                nm.wSock.Purge();
+                nm.WSock.WriteByte(Id);
+                nm.WSock.WriteByte(Flying);
+                nm.WSock.WriteByte(NoClip);
+                nm.WSock.WriteByte(Speeding);
+                nm.WSock.WriteByte(SpawnControl);
+                nm.WSock.WriteByte(ThirdPerson);
+                nm.WSock.WriteShort(JumpHeight);
+                nm.WSock.Purge();
             }
         }
 
