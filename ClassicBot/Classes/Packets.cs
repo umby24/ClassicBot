@@ -308,7 +308,7 @@ namespace ClassicBot.Classes {
         }
 
         public void Handle(NetworkManager nm, Bot core) {
-            if (!core.Entities.ContainsKey(PlayerId)) {
+            if (!core.Entities.ContainsKey(PlayerId) && PlayerId != -1) {
                 core.RaiseErrorMessage("Protocol Warning: Teleported non-existant player");
                 return;
             }
@@ -608,7 +608,7 @@ namespace ClassicBot.Classes {
             if (!core.EnableCpe)
                 core.RaiseErrorMessage("Protocol error: Received Extentry while CPE Disabled.");
 
-            if (core.SentCPE)
+            if (core.SentCpe)
                 core.RaiseErrorMessage("Protocol error: Received ExtEntry after sending client extensions!");
 
             core.ReceivedExtensions += 1;

@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DA6BC956-2BE1-4401-97D0-4B4D4A32C95B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>ClassicBot</RootNamespace>
@@ -30,16 +28,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Zlib">
-      <HintPath>..\..\..\..\programming\.NET Libraries\Ionic.Zlib.dll</HintPath>
+      <HintPath>..\Libraries\Ionic.Zlib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="ClassicWrapped">
-      <HintPath>..\..\..\..\..\media\Storage\Documents\GitHub\Hypercube\ClassicWrapped\bin\Release\ClassicWrapped.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\media\Storage\Documents\Visual Studio 2013\Projects\Classicube Minebot\Classicube Minebot\bin\Debug\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\Libraries\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="ClassicWrapped">
+      <HintPath>..\Libraries\ClassicWrapped.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />

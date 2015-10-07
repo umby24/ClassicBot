@@ -23,7 +23,7 @@ namespace StressBot {
             for (int i = 0; i < Bots; i++)
             {
                 string name = "uBot" + (dupelicateNames ? r.Next(i) : i);
-                BotsArr[i] = new Bot(ServiceTypes.Classicube, false, name, "", false);
+                BotsArr[i] = new Bot(false, name, "", false);
                 BotsArr[i].ErrorMessage += message => Console.WriteLine("Error:" + i + ": " + message);
                 BotsArr[i].Connect("potato", false, "127.0.0.1", 25565);
             }
