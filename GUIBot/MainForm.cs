@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
 using System.Windows.Forms;
 using ClassicBot;
 using GUIBot.Libraries;
@@ -46,6 +44,12 @@ namespace GUIBot {
             _bot.ErrorMessage += _bot_ErrorMessage;
             _bot.InfoMessage += _bot_InfoMessage;
             _bot.ExtPlayerListUpdate += _bot_ExtPlayerListUpdate;
+            _bot.DebugMessage += _bot_DebugMessage;
+        }
+
+        private void _bot_DebugMessage(string message)
+        {
+            Invoke(new StupidArgs(LogColor), "[DEBUG] " + message, Color.FromArgb(150, 170, 0), true);
         }
 
         public void DeregisterEvents() {
@@ -227,17 +231,19 @@ namespace GUIBot {
         #endregion
 
         private void btnSend_Click(object sender, EventArgs e) {
-            if (_bot != null && _bot.Nm != null && _bot.Nm.BaseSock.Connected) {
-                _bot.SendChat(tbInput.Text);
-                tbInput.Clear();
-            }
+            if (_bot?.Nm == null || !_bot.Nm.BaseSock.Connected)
+                return;
+
+            _bot.SendChat(tbInput.Text);
+            tbInput.Clear();
         }
 
         private void disconnectToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (_bot != null && _bot.Nm != null && _bot.Nm.BaseSock.Connected) {
-                _bot.Disconnect();
-                DeregisterEvents();
-            }
+            if (_bot?.Nm == null || !_bot.Nm.BaseSock.Connected)
+                return;
+
+            _bot.Disconnect();
+            DeregisterEvents();
         }
 
         private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -248,10 +254,11 @@ namespace GUIBot {
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
-            if (_bot != null && _bot.Nm != null && _bot.Nm.BaseSock.Connected) {
+            if (_bot?.Nm != null && _bot.Nm.BaseSock.Connected) {
                 _bot.Disconnect();
                 DeregisterEvents();
             }
+
             Close();
         }
     }

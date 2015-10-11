@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClassicBot.World;
 
 namespace ClassicBot.Classes {
@@ -13,7 +14,7 @@ namespace ClassicBot.Classes {
 
     public struct Handshake : IPacket {
 
-        public byte Id { get { return 0; } }
+        public byte Id => 0;
         public byte ProtocolVersion { get; set; }
         public string Name { get; set; }
         public string Motd { get; set; }
@@ -48,7 +49,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct Ping : IPacket {
-        public byte Id { get { return 1; } }
+        public byte Id => 1;
 
         public void Read(NetworkManager nm) {
 
@@ -69,7 +70,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct LevelInit : IPacket {
-        public byte Id { get { return 2; } }
+        public byte Id => 2;
 
         public void Read(NetworkManager nm) {
 
@@ -90,7 +91,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct LevelChunk : IPacket {
-        public byte Id { get { return 3; } }
+        public byte Id => 3;
         public short Length { get; set; }
         public byte[] Data { get; set; }
         public byte Percent { get; set; }
@@ -110,19 +111,22 @@ namespace ClassicBot.Classes {
             }
         }
         public void Handle(NetworkManager nm, Bot core) {
-            var temp = core.ClientWorld.BlockArray;
-            core.ClientWorld.BlockArray = new byte[temp.Length + Length];
+            var tempLength = core.ClientWorld.BlockArray.Length;
 
-			Buffer.BlockCopy(temp, 0, core.ClientWorld.BlockArray, 0, temp.Length);
-            Buffer.BlockCopy(Data, 0, core.ClientWorld.BlockArray, temp.Length, Length);
+            var temp = new byte[core.ClientWorld.BlockArray.Length];
+            Buffer.BlockCopy(core.ClientWorld.BlockArray, 0, temp, 0, temp.Length);
 
-			core.raiseDebugMessage("Map chunk size: " + Length + " Percent: " + Percent);
+            core.ClientWorld.BlockArray = new byte[tempLength + Length];
+            Buffer.BlockCopy(temp, 0, core.ClientWorld.BlockArray, 0, temp.Length);
+            Buffer.BlockCopy(Data, 0, core.ClientWorld.BlockArray, tempLength, Length);
+
+            core.raiseDebugMessage("Map chunk size: " + Length + " Percent: " + Percent);
             core.RaiseLevelProgress(Percent);
         }
     }
 
     public struct LevelFinalize : IPacket {
-        public byte Id { get { return 4; } }
+        public byte Id => 4;
 
         public short SizeX { get; set; }
         public short SizeY { get; set; }
@@ -143,6 +147,8 @@ namespace ClassicBot.Classes {
             }
         }
         public void Handle(NetworkManager nm, Bot core) {
+            File.WriteAllBytes("map.gz", core.ClientWorld.BlockArray);
+
             core.ClientWorld.BlockArray = GZip.UnGZip(core.ClientWorld.BlockArray) ??
                                           new byte[(SizeX * SizeY * SizeZ) + 4];
 
@@ -154,7 +160,8 @@ namespace ClassicBot.Classes {
             core.RaiseInfoMessage("Map complete.");
 
             if ((SizeX * SizeY * SizeZ) != blockArraySize)
-                core.RaiseErrorMessage(string.Format("Protocol Error: Map data length != Finalize length ({0} - {1})", blockArraySize, (SizeX * SizeY * SizeZ)));
+                core.RaiseErrorMessage(
+                    $"Protocol Error: Map data length != Finalize length ({blockArraySize} - {(SizeX*SizeY*SizeZ)})");
 
             core.RaiseLevelComplete(SizeX, SizeY, SizeZ);
 
@@ -163,7 +170,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct SetBlock : IPacket {
-        public byte Id { get { return 5; } }
+        public byte Id => 5;
         public short X { get; set; }
         public short Y { get; set; }
         public short Z { get; set; }
@@ -196,7 +203,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct SetBlockServer : IPacket {
-        public byte Id { get { return 6; } }
+        public byte Id => 6;
         public short X { get; set; }
         public short Y { get; set; }
         public short Z { get; set; }
@@ -225,7 +232,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct SpawnPlayer : IPacket {
-        public byte Id { get { return 7; } }
+        public byte Id => 7;
         public sbyte PlayerId { get; set; }
         public string PlayerName { get; set; }
         public short X { get; set; }
@@ -277,7 +284,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct PlayerTeleport : IPacket {
-        public byte Id { get { return 8; } }
+        public byte Id => 8;
         public sbyte PlayerId { get; set; }
         public short X { get; set; }
         public short Y { get; set; }
@@ -331,7 +338,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct PosAndOrient : IPacket {
-        public byte Id { get { return 9; } }
+        public byte Id => 9;
         public sbyte PlayerId { get; set; }
         public short ChangeX { get; set; }
         public short ChangeY { get; set; }
@@ -385,7 +392,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct PositionUpdate : IPacket {
-        public byte Id { get { return 10; } }
+        public byte Id => 10;
         public sbyte PlayerId { get; set; }
         public short ChangeX { get; set; }
         public short ChangeY { get; set; }
@@ -423,7 +430,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct OrientationUpdate : IPacket {
-        public byte Id { get { return 11; } }
+        public byte Id => 11;
         public sbyte PlayerId { get; set; }
         public byte Yaw { get; set; }
         public byte Pitch { get; set; }
@@ -460,7 +467,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct DespawnPlayer : IPacket {
-        public byte Id { get { return 12; } }
+        public byte Id => 12;
         public sbyte PlayerId;
 
         public void Read(NetworkManager nm) {
@@ -489,7 +496,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct Message : IPacket {
-        public byte Id { get { return 13; } }
+        public byte Id => 13;
         public sbyte PlayerId { get; set; }
         public string Text { get; set; }
 
@@ -513,7 +520,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct Disconnect : IPacket {
-        public byte Id { get { return 14; } }
+        public byte Id => 14;
         public string Reason { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -534,7 +541,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct UpdateRank : IPacket {
-        public byte Id { get { return 14; } }
+        public byte Id => 14;
         public byte Rank { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -555,7 +562,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct ExtInfo : IPacket {
-        public byte Id { get { return 16; } }
+        public byte Id => 16;
         public string AppName { get; set; }
         public short ExtensionCount { get; set; }
 
@@ -586,7 +593,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct ExtEntry : IPacket {
-        public byte Id { get { return 17; } }
+        public byte Id => 17;
         public string ExtName { get; set; }
         public int Version { get; set; }
 
@@ -629,7 +636,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct SetClickDistance : IPacket {
-        public byte Id { get { return 18; } }
+        public byte Id => 18;
         public short Distance { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -657,7 +664,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct CustomBlockSupportLevel : IPacket {
-        public byte Id { get { return 19; } }
+        public byte Id => 19;
         public byte SupportLevel { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -689,7 +696,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct HoldThis : IPacket {
-        public byte Id { get { return 20; } }
+        public byte Id => 20;
         public byte BlockToHold { get; set; }
         public byte PreventChange { get; set; }
 
@@ -721,7 +728,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct SetTextHotKey : IPacket {
-        public byte Id { get { return 21; } }
+        public byte Id => 21;
         public string Label { get; set; }
         public string Action { get; set; }
         public int KeyCode { get; set; }
@@ -768,7 +775,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct ExtAddPlayerName : IPacket {
-        public byte Id { get { return 22; } }
+        public byte Id => 22;
         public short NameId { get; set; }
         public string PlayerName { get; set; }
         public string ListName { get; set; }
@@ -825,7 +832,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct ExtAddEntity : IPacket {
-        public byte Id { get { return 23; } }
+        public byte Id => 23;
         public byte EntityId { get; set; }
         public string InGameName { get; set; }
         public string SkinName { get; set; }
@@ -854,7 +861,7 @@ namespace ClassicBot.Classes {
         }
     }
     public struct ExtRemovePlayerName : IPacket {
-        public byte Id { get { return 24; } }
+        public byte Id => 24;
         public short NameId { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -888,7 +895,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct EnvSetColor : IPacket {
-        public byte Id { get { return 25; } }
+        public byte Id => 25;
         public byte ColorType { get; set; }
         public short Red { get; set; }
         public short Green { get; set; }
@@ -922,7 +929,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct MakeSelection : IPacket {
-        public byte Id { get { return 26; } }
+        public byte Id => 26;
         public byte SelectionId { get; set; }
         public string Label { get; set; }
         public short StartX { get; set; }
@@ -980,7 +987,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct RemoveSelection : IPacket {
-        public byte Id { get { return 27; } }
+        public byte Id => 27;
         public byte SelectionId { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -1005,7 +1012,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct SetBlockPermissions : IPacket {
-        public byte Id { get { return 28; } }
+        public byte Id => 28;
         public byte BlockType { get; set; }
         public byte AllowPlacement { get; set; }
         public byte AllowDeletion { get; set; }
@@ -1039,7 +1046,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct ChangeModel : IPacket {
-        public byte Id { get { return 29; } }
+        public byte Id => 29;
         public byte EntityId { get; set; }
         public string ModelName { get; set; }
 
@@ -1066,7 +1073,7 @@ namespace ClassicBot.Classes {
         }
     }
     public struct EnvSetMapAppearance : IPacket {
-        public byte Id { get { return 30; } }
+        public byte Id => 30;
         public string TextureUrl { get; set; }
         public byte SideBlock { get; set; }
         public byte EdgeBlock { get; set; }
@@ -1099,7 +1106,7 @@ namespace ClassicBot.Classes {
         }
     }
     public struct EnvSetWeatherType : IPacket {
-        public byte Id { get { return 31; } }
+        public byte Id => 31;
         public byte WeatherType { get; set; }
 
         public void Read(NetworkManager nm) {
@@ -1123,7 +1130,7 @@ namespace ClassicBot.Classes {
         }
     }
     public struct HackControl : IPacket {
-        public byte Id { get { return 32; } }
+        public byte Id => 32;
         public byte Flying { get; set; }
         public byte NoClip { get; set; }
         public byte Speeding { get; set; }
