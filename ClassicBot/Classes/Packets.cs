@@ -340,17 +340,17 @@ namespace ClassicBot.Classes {
     public struct PosAndOrient : IPacket {
         public byte Id => 9;
         public sbyte PlayerId { get; set; }
-        public short ChangeX { get; set; }
-        public short ChangeY { get; set; }
-        public short ChangeZ { get; set; }
+        public sbyte ChangeX { get; set; }
+        public sbyte ChangeY { get; set; }
+        public sbyte ChangeZ { get; set; }
         public byte Yaw { get; set; }
         public byte Pitch { get; set; }
 
         public void Read(NetworkManager nm) {
             PlayerId = nm.WSock.ReadSByte();
-            ChangeX = nm.WSock.ReadShort();
-            ChangeZ = nm.WSock.ReadShort();
-            ChangeY = nm.WSock.ReadShort();
+            ChangeX = nm.WSock.ReadSByte();
+            ChangeZ = nm.WSock.ReadSByte();
+            ChangeY = nm.WSock.ReadSByte();
             Yaw = nm.WSock.ReadByte();
             Pitch = nm.WSock.ReadByte();
         }
@@ -359,9 +359,9 @@ namespace ClassicBot.Classes {
             lock (nm.WriteLock) {
                 nm.WSock.WriteByte(Id);
                 nm.WSock.WriteSByte(PlayerId);
-                nm.WSock.WriteShort(ChangeX);
-                nm.WSock.WriteShort(ChangeZ);
-                nm.WSock.WriteShort(ChangeY);
+                nm.WSock.WriteSByte(ChangeX);
+                nm.WSock.WriteSByte(ChangeZ);
+                nm.WSock.WriteSByte(ChangeY);
                 nm.WSock.WriteByte(Yaw);
                 nm.WSock.WriteByte(Pitch);
                 nm.WSock.Purge();
@@ -394,15 +394,15 @@ namespace ClassicBot.Classes {
     public struct PositionUpdate : IPacket {
         public byte Id => 10;
         public sbyte PlayerId { get; set; }
-        public short ChangeX { get; set; }
-        public short ChangeY { get; set; }
-        public short ChangeZ { get; set; }
+        public sbyte ChangeX { get; set; }
+        public sbyte ChangeY { get; set; }
+        public sbyte ChangeZ { get; set; }
 
         public void Read(NetworkManager nm) {
             PlayerId = nm.WSock.ReadSByte();
-            ChangeX = nm.WSock.ReadShort();
-            ChangeZ = nm.WSock.ReadShort();
-            ChangeY = nm.WSock.ReadShort();
+            ChangeX = nm.WSock.ReadSByte();
+            ChangeZ = nm.WSock.ReadSByte();
+            ChangeY = nm.WSock.ReadSByte();
         }
 
         public void Write(NetworkManager nm) {
@@ -541,7 +541,7 @@ namespace ClassicBot.Classes {
     }
 
     public struct UpdateRank : IPacket {
-        public byte Id => 14;
+        public byte Id => 15;
         public byte Rank { get; set; }
 
         public void Read(NetworkManager nm) {
