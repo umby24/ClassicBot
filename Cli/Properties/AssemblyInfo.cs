@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("ClassicBot")]
+[assembly: AssemblyTitle("Cli")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClassicBot")]
+[assembly: AssemblyProduct("Cli")]
 [assembly: AssemblyCopyright("Copyright ©  116")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
-[assembly: Guid("ACD9C331-3E16-477A-BDA6-076F40935A75")]
+[assembly: Guid("FB32B614-6FD6-4F60-A7A5-01C195F85378")]
 
 // Version information for an assembly consists of the following four values:
 //

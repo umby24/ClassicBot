@@ -1,7 +1,7 @@
 #################
 ## Eclipse
 #################
-
+packages/
 *.pydevproject
 .project
 .metadata
